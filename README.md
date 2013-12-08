@@ -6,8 +6,16 @@ It's a work in progress, and for now will just generate a boilerplate app struct
 
 ## Installation
 
+Install Tesla globally (recommended):
+
+	npm install -g tesla
+
+Install tesla locally:
+
 	npm install -g tesla
 
 ## Usage
 
-	tesla app_name
+Generate a new Tesla app:
+
+	tesla app-name
