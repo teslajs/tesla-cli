@@ -12,7 +12,7 @@ Install Tesla globally (recommended):
 
 Install tesla locally:
 
-	npm install -g tesla
+	npm install tesla
 
 ## Usage
 
