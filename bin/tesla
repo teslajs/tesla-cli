@@ -50,6 +50,7 @@ if (program.hogan) program.template = 'hjs';
     if (empty || program.force) {
       createApplicationAt(path);
     } else {
+      console.log();
       program.confirm('destination is not empty, continue? ', function(ok){
         if (ok) {
           process.stdin.destroy();
@@ -82,7 +83,7 @@ function createApplicationAt(path) {
 
   mkdir(path, function(){
 
-    ncp('./bin/_src', path, function (err) {
+    ncp(__dirname + '/_src', path, function (err) {
       if (err) {
         return console.error(err);
       }
