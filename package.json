@@ -4,15 +4,29 @@
   "version": "0.1.5",
   "private": false,
   "contributors": [
-    "Jesse Weed"
+    {
+      "name" : "Jesse Weed (http://jesseweed.com)"
+    }
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/teslajs/tesla-cli.js"
+    "url": "https://github.com/teslajs/tesla-cli"
+  },
+  "bugs": {
+    "url" : "https://github.com/teslajs/tesla-cli/issues"
+  },
+  "homepage": {
+    "url": "http://teslajs.com"
   },
   "bin": {
     "tesla": "./bin/tesla"
   },
+  "licenses" : [
+    {
+      "type": "MIT",
+      "url": "https://github.com/teslajs/tesla-cli/blob/master/LICENSE"
+    }
+  ],
   "engines": {
     "node": "0.10.x",
     "npm": "1.2.x"
