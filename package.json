@@ -3,7 +3,9 @@
   "description": "Command line interface for Tesla.js",
   "version": "0.1.4",
   "private": false,
-  "author": "Jesse Weed",
+  "contributors": [
+    "Jesse Weed"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/teslajs/tesla-cli.js"
