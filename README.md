@@ -16,6 +16,6 @@ Install tesla locally:
 
 ## Usage
 
-Generate a new Tesla app:
+Generate a new Tesla app called "lasers":
 
-	tesla app-name
+	tesla lasers
