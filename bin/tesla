@@ -135,10 +135,6 @@ function createApplicationAt(path) {
                 // UPDATE APP NAME
                 data = data.replace( '{{name}}', path );
 
-                console.log(data);
-                console.log('name: ' + path);
-
-
                 // SET CSS ENGINE
                 switch (program.css) {
                     case 'sass':
