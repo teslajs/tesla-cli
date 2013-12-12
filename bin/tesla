@@ -119,15 +119,17 @@ function createApplicationAt(path) {
                 fileContent = fs.readFileSync(pkgFile),
                 pkg = JSON.parse(fileContent);
 
+            // OPEN PACKAGE FILE
+            var pkgFile = path + '/package.json',
+                pkg = fs.readFileSync( pkgFile ).toString();
 
             // OPEN CONFIG FILE
             var cfgFile = path + '/config/config.js',
                 cfg = fs.readFileSync( cfgFile ).toString();
 
             // UPDATE APP NAME
+            pkg.replace( '{{name}}', path );
             cfg.replace( '{{name}}', path );
-            pkg.name = path;
-
 
             // SET CSS ENGINE
             switch (program.css) {
