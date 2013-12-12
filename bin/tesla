@@ -120,7 +120,6 @@ function createApplicationAt(path) {
                 pkg = JSON.parse(fileContent);
 
             pkg.name = path;
-            fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 4)); // WRITE PACKAGE FILE
 
             // OPEN CONFIG FILE
             var cfgFile = path + '/config/config.js';
@@ -183,6 +182,7 @@ function createApplicationAt(path) {
                 }
 
                 fs.writeFileSync(cfgFile, data); // WRITE CONFIG FILE
+                fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 4)); // WRITE PACKAGE FILE
 
             });
 
