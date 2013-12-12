@@ -1,7 +1,7 @@
 {
   "name": "tesla-cli",
   "description": "Command line interface for Tesla.js",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "private": false,
   "contributors": [
     {
