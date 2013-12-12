@@ -1,24 +1,21 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
 
-var program = require('commander')
-  , mkdirp = require('mkdirp')
-  , pkg = require('../package.json')
-  , version = pkg.version
-  , os = require('os')
-  , fs = require('fs')
-  , ncp = require('ncp').ncp;
+// MODULE DENEPDENCIES
+var mkdirp = require('mkdirp'),
+    ncp = require('ncp').ncp,
+    program = require('commander'),
+    pkg = require('../package.json'),
+    version = pkg.version,
+    os = require('os'),
+    fs = require('fs');
 
 
 // CLI
-
 program
   .version(version)
   .usage('[options] [dir]')
-  .option('-s, --sessions', 'add session support')
+  // .option('-s, --sessions', 'add session support')
   .option('-e, --ejs', 'add ejs engine support (defaults to jade)')
   .option('-J, --jshtml', 'add jshtml engine support (defaults to jade)')
   .option('-H, --hogan', 'add hogan.js engine support')
@@ -27,69 +24,167 @@ program
   .parse(process.argv);
 
 
-// Path
+// PATH
 var path = program.args.shift() || '.';
 
 // end-of-line code
 var eol = os.EOL
 
 // Template engine
-
 program.template = 'jade';
 if (program.ejs) program.template = 'ejs';
 if (program.jshtml) program.template = 'jshtml';
 if (program.hogan) program.template = 'hjs';
 
 
-
-
 // Generate application
 
 (function createApplication(path) {
-  emptyDirectory(path, function(empty){
-    if (empty || program.force) {
-      createApplicationAt(path);
-    } else {
-      console.log();
-      program.confirm('destination is not empty, continue? ', function(ok){
-        if (ok) {
-          process.stdin.destroy();
-          createApplicationAt(path);
+    emptyDirectory(path, function(empty){
+        if (empty || program.force) {
+            createApplicationAt(path);
         } else {
-          abort('aborting');
+            console.log();
+            program.confirm('destination is not empty, continue? ', function(ok){
+                if (ok) {
+                    process.stdin.destroy();
+                    createApplicationAt(path);
+                } else {
+                    abort('aborting');
+                }
+            });
         }
-
-
-      });
-        // createApplicationAt(path);
-
-    }
-  });
+    });
 })(path);
+
+function cleanup() {
+
+
+}
+
+
+
+function rmdir(path) {
+  if( fs.existsSync(path) ) {
+    fs.readdirSync(path).forEach(function(file,index){
+      var curPath = path + "/" + file;
+      if(fs.statSync(curPath).isDirectory()) { // recurse
+        rmdir(curPath);
+      } else { // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+};
+
 
 
 // NEEDS SOME UPDATE TO WORK WITH DYNAMIC ENGINES
 function createApplicationAt(path) {
-  console.log();
-  process.on('exit', function(){
-    console.log();
-    console.log('   install dependencies:');
-    console.log('     $ cd %s && npm install', path);
-    console.log();
-    console.log('   run the app:');
-    console.log('     $ grunt');
-    console.log();
-  });
 
-  mkdir(path, function(){
+    console.log();
+    process.on('exit', function(){
 
-    ncp(__dirname + '/_src', path, function (err) {
-      if (err) {
-        return console.error(err);
-      }
+        // CLEANUP UNUSED FOLDERS
+        rmdir(path + '/app/views.ejs');
+        rmdir(path + '/app/views.jade');
+        rmdir(path + '/app/views.jshtml');
+        rmdir(path + '/app/views.hjs');
+        rmdir(path + '/public/css.less');
+        rmdir(path + '/public/css.sass');
+        rmdir(path + '/public/css.stylus');
 
+        // LET USER KNOW WE'RE DONE
+        console.log();
+        console.log('   install dependencies:');
+        console.log('     $ cd %s && npm install', path);
+        console.log();
+        console.log('   run the app:');
+        console.log('     $ grunt');
+        console.log();
     });
-  });
+
+    mkdir(path, function(){
+
+        ncp(__dirname + '/_src', path, function (err) {
+
+            // HANDLE ERRORS
+            if (err) {
+                return console.error(err);
+            }
+
+            // UPDATE PACKAGE FILE
+            var pkgFile = path + '/package.json',
+                fileContent = fs.readFileSync(pkgFile),
+                pkg = JSON.parse(fileContent);
+
+
+            // OPEN CONFIG FILE
+            var cfgFile = path + '/config/config.js',
+                cfg = fs.readFileSync( cfgFile ).toString();
+
+            // UPDATE APP NAME
+            cfg.replace( '{{name}}', path );
+            pkg.name = path;
+
+
+            // SET CSS ENGINE
+            switch (program.css) {
+                case 'sass':
+                    pkg.dependencies.sass = 'latest';
+                    cfg.replace( '{{css}}', 'sass' );
+                    rmdir(path + '/public/css');
+                    fs.renameSync(path + '/public/css.sass', path + '/public/css');
+                case 'less':
+                    pkg.dependencies.less = 'latest';
+                    cfg.replace( '{{css}}', 'less' );
+                    rmdir(path + '/public/css');
+                    fs.renameSync(path + '/public/css.less', path + '/public/css');
+                    break;
+                case 'stylus':
+                    pkg.dependencies.stylus = 'latest';
+                    cfg.replace( '{{css}}', 'stylus' );
+                    rmdir(path + '/public/css');
+                    fs.renameSync(path + '/public/css.stylus', path + '/public/css');
+                    break;
+                default:
+            }
+
+
+            // SET TEMPLATING ENGINE
+            switch (program.template) {
+                case 'ejs':
+                    pkg.dependencies.ejs = 'latest';
+                    cfg.replace( '{{html}}', 'ejs' );
+                    fs.renameSync(path + '/app/views.ejs', path + '/app/views');
+                case 'jade':
+                    pkg.dependencies.jade = 'latest';
+                    cfg.replace( '{{html}}', 'jade' );
+                    fs.renameSync(path + '/app/views.jade', path + '/app/views');
+                    break;
+                case 'jshtml':
+                    pkg.dependencies['jshtml-express'] = 'latest';
+                    cfg.replace( '{{html}}', 'jshtml' );
+                    fs.renameSync(path + '/app/views.ejs', path + '/app/views');
+                    break;
+                case 'hjs':
+                    pkg.dependencies['express-hogan'] = 'latest';
+                    cfg.replace( '{{html}}', 'hjs' );
+                    fs.renameSync(path + '/app/views.hjs', path + '/app/views');
+                break;
+
+            }
+
+
+            // SAVE NEW SETTINGS
+            fs.writeFileSync(cfgFile, cfg); // WRITE CONFIG FILE
+            fs.writeFileSync(pkgFile, pkg); // WRITE PACKAGE FILE
+
+            // REMOVE UNNEEDED FILES
+
+        });
+    });
 }
 
 /**
