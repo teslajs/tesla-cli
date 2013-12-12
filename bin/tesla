@@ -119,70 +119,76 @@ function createApplicationAt(path) {
                 fileContent = fs.readFileSync(pkgFile),
                 pkg = JSON.parse(fileContent);
 
-            // OPEN CONFIG FILE
-            var cfgFile = path + '/config/config.js',
-                cfg = fs.readFileSync( cfgFile ).toString();
-
-            // OPEN CONFIG FILE
-            var cfgFile = path + '/config/config.js',
-                cfg = fs.readFileSync( cfgFile ).toString();
-
-            // UPDATE APP NAME
-            cfg.replace( '{{name}}', path );
             pkg.name = path;
-
-
-            // SET CSS ENGINE
-            switch (program.css) {
-                case 'sass':
-                    pkg.dependencies.sass = 'latest';
-                    cfg.replace( '{{css}}', 'sass' );
-                    rmdir(path + '/public/css');
-                    fs.renameSync(path + '/public/css.sass', path + '/public/css');
-                case 'less':
-                    pkg.dependencies.less = 'latest';
-                    cfg.replace( '{{css}}', 'less' );
-                    rmdir(path + '/public/css');
-                    fs.renameSync(path + '/public/css.less', path + '/public/css');
-                    break;
-                case 'stylus':
-                    pkg.dependencies.stylus = 'latest';
-                    cfg.replace( '{{css}}', 'stylus' );
-                    rmdir(path + '/public/css');
-                    fs.renameSync(path + '/public/css.stylus', path + '/public/css');
-                    break;
-                default:
-            }
-
-
-            // SET TEMPLATING ENGINE
-            switch (program.template) {
-                case 'ejs':
-                    pkg.dependencies.ejs = 'latest';
-                    cfg.replace( '{{html}}', 'ejs' );
-                    fs.renameSync(path + '/app/views.ejs', path + '/app/views');
-                case 'jade':
-                    pkg.dependencies.jade = 'latest';
-                    cfg.replace( '{{html}}', 'jade' );
-                    fs.renameSync(path + '/app/views.jade', path + '/app/views');
-                    break;
-                case 'jshtml':
-                    pkg.dependencies['jshtml-express'] = 'latest';
-                    cfg.replace( '{{html}}', 'jshtml' );
-                    fs.renameSync(path + '/app/views.ejs', path + '/app/views');
-                    break;
-                case 'hjs':
-                    pkg.dependencies['express-hogan'] = 'latest';
-                    cfg.replace( '{{html}}', 'hjs' );
-                    fs.renameSync(path + '/app/views.hjs', path + '/app/views');
-                break;
-
-            }
-
-
-            // SAVE NEW SETTINGS
-            fs.writeFileSync(cfgFile, cfg); // WRITE CONFIG FILE
             fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 4)); // WRITE PACKAGE FILE
+
+            // OPEN CONFIG FILE
+            var cfgFile = path + '/config/config.js';
+            fs.readFile( cfgFile, function (err, data) {
+
+                if (err) {
+                    return console.error(err);
+                }
+
+                data = data.toString();
+
+                // UPDATE APP NAME
+                data = data.replace( '{{name}}', path );
+
+                console.log(data);
+                console.log('name: ' + path);
+
+
+                // SET CSS ENGINE
+                switch (program.css) {
+                    case 'sass':
+                        pkg.dependencies.sass = 'latest';
+                        data = data.replace( '{{css}}', 'sass' );
+                        rmdir(path + '/public/css');
+                        fs.renameSync(path + '/public/css.sass', path + '/public/css');
+                    case 'less':
+                        pkg.dependencies.less = 'latest';
+                        data = data.replace( '{{css}}', 'less' );
+                        rmdir(path + '/public/css');
+                        fs.renameSync(path + '/public/css.less', path + '/public/css');
+                        break;
+                    case 'stylus':
+                        pkg.dependencies.stylus = 'latest';
+                        data = data.replace( '{{css}}', 'stylus' );
+                        rmdir(path + '/public/css');
+                        fs.renameSync(path + '/public/css.stylus', path + '/public/css');
+                        break;
+                    default:
+                }
+
+
+                // SET TEMPLATING ENGINE
+                switch (program.template) {
+                    case 'ejs':
+                        pkg.dependencies.ejs = 'latest';
+                        data = data.replace( '{{html}}', 'ejs' );
+                        fs.renameSync(path + '/app/views.ejs', path + '/app/views');
+                    case 'jade':
+                        pkg.dependencies.jade = 'latest';
+                        data = data.replace( '{{html}}', 'jade' );
+                        fs.renameSync(path + '/app/views.jade', path + '/app/views');
+                        break;
+                    case 'jshtml':
+                        pkg.dependencies['jshtml-express'] = 'latest';
+                        data = data.replace( '{{html}}', 'jshtml' );
+                        fs.renameSync(path + '/app/views.ejs', path + '/app/views');
+                        break;
+                    case 'hjs':
+                        pkg.dependencies['express-hogan'] = 'latest';
+                        data = data.replace( '{{html}}', 'hjs' );
+                        fs.renameSync(path + '/app/views.hjs', path + '/app/views');
+                    break;
+
+                }
+
+                fs.writeFileSync(cfgFile, data); // WRITE CONFIG FILE
+
+            });
 
             // REMOVE UNNEEDED FILES
 
