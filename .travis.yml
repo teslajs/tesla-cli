@@ -11,3 +11,4 @@ script: "./bin/tesla testapp --css stylus --nib"
 after_script:
     - cd testapp
     - grunt
+    - sudo npm install
