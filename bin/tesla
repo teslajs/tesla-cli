@@ -17,6 +17,8 @@ program
   .usage('[options] [dir]')
   // .option('-s, --sessions', 'add session support')
   .option('-e, --ejs', 'add ejs engine support (defaults to jade)')
+  .option('--nib', 'add nib support to stylus')
+  .option('--axis', 'add axis support to stylus')
   .option('-J, --jshtml', 'add jshtml engine support (defaults to jade)')
   .option('-H, --hogan', 'add hogan.js engine support')
   .option('-c, --css <engine>', 'add stylesheet <engine> support (less|stylus) (defaults to plain css)')
@@ -63,7 +65,7 @@ function cleanup() {
 }
 
 
-
+// REMOVE A DIRECTORY
 function rmdir(path) {
   if( fs.existsSync(path) ) {
     fs.readdirSync(path).forEach(function(file,index){
@@ -150,6 +152,8 @@ function createApplicationAt(path) {
                     case 'stylus':
                         pkg.dependencies.stylus = 'latest';
                         data = data.replace( '{{css}}', 'stylus' );
+                        if (program.nib) pkg.dependencies.nib = "latest"; data = data.replace( '{{cssLibrary}}', 'nib' );
+                        if (program.axis) pkg.dependencies['axis-css'] = "latest"; data = data.replace( '{{cssLibrary}}', 'axis' );
                         rmdir(path + '/public/css');
                         fs.renameSync(path + '/public/css.stylus', path + '/public/css');
                         break;
