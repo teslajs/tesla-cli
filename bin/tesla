@@ -152,8 +152,15 @@ function createApplicationAt(path) {
                     case 'stylus':
                         pkg.dependencies.stylus = 'latest';
                         data = data.replace( '{{css}}', 'stylus' );
-                        if (program.nib) pkg.dependencies.nib = "latest"; data = data.replace( '{{cssLibrary}}', 'nib' );
-                        if (program.axis) pkg.dependencies['axis-css'] = "latest"; data = data.replace( '{{cssLibrary}}', 'axis' );
+                        if (program.nib) {
+                            pkg.dependencies.nib = "latest";
+                            data = data.replace( '{{cssLibrary}}', 'nib' );
+                        } else if (program.axis) {
+                            pkg.dependencies['axis-css'] = "latest";
+                            data = data.replace( '{{cssLibrary}}', 'axis' );
+                        } else {
+                            data = data.replace( '{{cssLibrary}}', false );
+                        }
                         rmdir(path + '/public/css');
                         fs.renameSync(path + '/public/css.stylus', path + '/public/css');
                         break;
