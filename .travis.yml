@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - "0.10"
+env:
+  - NODE_ENV=travis
+# whitelist
+branches:
+  only:
+    - master
+script: "./bin/tesla testapp -css stylus --nib"
