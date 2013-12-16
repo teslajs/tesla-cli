@@ -1,4 +1,5 @@
 # Tesla.js Command Line Interface (beta)
+[![Build Status](https://travis-ci.org/teslajs/tesla-cli.png?branch=master)](https://travis-ci.org/teslajs/tesla-cli)
 [![NPM version](https://badge.fury.io/js/tesla-cli.png)](http://badge.fury.io/js/tesla-cli)
 
 Git repo for the [Tesla.js](https://github.com/teslajs/tesla.js) command line interface.
@@ -54,6 +55,8 @@ Options:
   -J, --jshtml        add jshtml engine support (defaults to jade)
   -H, --hogan         add hogan.js engine support (defaults to jade)
   -c, --css   add stylesheet  support (less|sass|stylus) (defaults to plain css)
+  --nib               add support for nib to stylus
+  --axis              add support for axis to stylus
   -f, --force         force on non-empty directory
 ```
 
