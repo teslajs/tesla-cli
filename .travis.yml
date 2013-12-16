@@ -7,4 +7,4 @@ env:
 branches:
   only:
     - master
-script: "./bin/tesla testapp -css stylus --nib"
+script: "./bin/tesla testapp --css stylus --nib"
