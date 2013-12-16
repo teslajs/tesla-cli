@@ -9,5 +9,5 @@ branches:
     - master
 script: "./bin/tesla testapp --css stylus --nib"
 after_script:
-	-cd testapp
-	-grunt
+    -cd testapp
+    -grunt
