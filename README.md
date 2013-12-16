@@ -1,6 +1,8 @@
 # Tesla.js Command Line Interface (beta)
 [![Build Status](https://travis-ci.org/teslajs/tesla-cli.png?branch=master)](https://travis-ci.org/teslajs/tesla-cli)
 [![NPM version](https://badge.fury.io/js/tesla-cli.png)](http://badge.fury.io/js/tesla-cli)
+[![Dependency Status](https://gemnasium.com/teslajs/tesla-cli.png)](https://gemnasium.com/teslajs/tesla-cli)
+
 
 Git repo for the [Tesla.js](https://github.com/teslajs/tesla.js) command line interface.
 
