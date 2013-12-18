@@ -1,3 +1,0 @@
-[submodule "bin/_src"]
-	path = bin/_src
-	url = https://github.com/teslajs/tesla.js
