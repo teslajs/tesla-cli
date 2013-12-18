@@ -89,13 +89,7 @@ function createApplicationAt(path) {
     process.on('exit', function(){
 
         // CLEANUP UNUSED FOLDERS
-        rmdir(path + '/app/views.ejs');
-        rmdir(path + '/app/views.jade');
-        rmdir(path + '/app/views.jshtml');
-        rmdir(path + '/app/views.hjs');
-        rmdir(path + '/public/css.less');
-        rmdir(path + '/public/css.sass');
-        rmdir(path + '/public/css.stylus');
+        rmdir(path + '/app/_templates');
 
         // LET USER KNOW WE'RE DONE
         console.log();
@@ -125,6 +119,7 @@ function createApplicationAt(path) {
 
             // OPEN CONFIG FILE
             var cfgFile = path + '/config/config.js';
+
             fs.readFile( cfgFile, function (err, data) {
 
                 if (err) {
@@ -134,35 +129,29 @@ function createApplicationAt(path) {
                 data = data.toString();
 
                 // UPDATE APP NAME
-                data = data.replace( '{{name}}', path );
+                data = data.replace( 'tesla.js', path );
 
                 // SET CSS ENGINE
                 switch (program.css) {
                     case 'sass':
                         pkg.dependencies.sass = 'latest';
-                        data = data.replace( '{{css}}', 'sass' );
-                        rmdir(path + '/public/css');
-                        fs.renameSync(path + '/public/css.sass', path + '/public/css');
+                        data = data.replace( 'css: "stylus"', 'css: "sass"' );
+                        break;
                     case 'less':
                         pkg.dependencies.less = 'latest';
-                        data = data.replace( '{{css}}', 'less' );
-                        rmdir(path + '/public/css');
-                        fs.renameSync(path + '/public/css.less', path + '/public/css');
+                        data = data.replace( 'css: "stylus"', 'css: "less' );
                         break;
                     case 'stylus':
                         pkg.dependencies.stylus = 'latest';
-                        data = data.replace( '{{css}}', 'stylus' );
+
                         if (program.nib) {
                             pkg.dependencies.nib = "latest";
-                            data = data.replace( '{{cssLibrary}}', 'nib' );
+                            data = data.replace( 'cssLibrary: false', 'cssLibrary: "nib"' );
                         } else if (program.axis) {
                             pkg.dependencies['axis-css'] = "latest";
-                            data = data.replace( '{{cssLibrary}}', 'axis' );
-                        } else {
-                            data = data.replace( '{{cssLibrary}}', false );
+                            data = data.replace( 'cssLibrary: false', 'cssLibrary: "axis"' );
                         }
-                        rmdir(path + '/public/css');
-                        fs.renameSync(path + '/public/css.stylus', path + '/public/css');
+
                         break;
                     default:
                 }
@@ -172,23 +161,33 @@ function createApplicationAt(path) {
                 switch (program.template) {
                     case 'ejs':
                         pkg.dependencies.ejs = 'latest';
-                        data = data.replace( '{{html}}', 'ejs' );
-                        fs.renameSync(path + '/app/views.ejs', path + '/app/views');
+                        data = data.replace( 'html: "jade"', 'html: "ejs"' );
+                        rmdir(path + '/app/views');
+                        ncp(__dirname + '/_src/app/_templates/views/ejs', path + '/app/views/', function (err) {
+                            if (err) return console.error(err); // HANDLE ERRORS
+                            // fs.renameSync(path + '/app/ejs', path + '/app/views');
+                        });
+                        break;
                     case 'jade':
                         pkg.dependencies.jade = 'latest';
-                        data = data.replace( '{{html}}', 'jade' );
-                        fs.renameSync(path + '/app/views.jade', path + '/app/views');
                         break;
                     case 'jshtml':
                         pkg.dependencies['jshtml-express'] = 'latest';
-                        data = data.replace( '{{html}}', 'jshtml' );
-                        fs.renameSync(path + '/app/views.ejs', path + '/app/views');
+                        data = data.replace( 'html: "jade"', 'html: "jshtml"' );
+                        rmdir(path + '/app/views');
+                        ncp(__dirname + '/_src/app/_templates/views/jshtml', path + '/app/views/', function (err) {
+                            if (err) return console.error(err); // HANDLE ERRORS
+                        });
                         break;
                     case 'hjs':
                         pkg.dependencies['express-hogan'] = 'latest';
-                        data = data.replace( '{{html}}', 'hjs' );
-                        fs.renameSync(path + '/app/views.hjs', path + '/app/views');
-                    break;
+                        data = data.replace( 'html: "jade"', 'html: "hjs"' );
+                        rmdir(path + '/app/views');
+                        ncp(__dirname + '/_src/app/_templates/views/hjs', path + '/app/views/', function (err) {
+                            if (err) return console.error(err); // HANDLE ERRORS
+                        });
+                        break;
+                    default:
 
                 }
 
