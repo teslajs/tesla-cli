@@ -90,6 +90,7 @@ function createApplicationAt(path) {
 
         // CLEANUP UNUSED FOLDERS
         rmdir(path + '/app/_templates');
+        fs.unlink(path + '/.git');
 
         // LET USER KNOW WE'RE DONE
         console.log();
