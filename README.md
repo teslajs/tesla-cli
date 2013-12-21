@@ -74,3 +74,7 @@ Or to generate an application with EJS & SASS support:
 ```
 $ tesla --css sass --ejs foobar
 ```
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/teslajs/tesla-cli/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
