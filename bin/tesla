@@ -4,9 +4,13 @@
 // MODULE DENEPDENCIES
 var mkdirp = require('mkdirp'),
     ncp = require('ncp').ncp,
+    colors = require('colors'),
     program = require('commander'),
     pkg = require('../package.json'),
     version = pkg.version,
+    exec = require('child_process').exec,
+    spawn = require('child_process').spawn,
+    child,
     os = require('os'),
     fs = require('fs');
 
@@ -23,6 +27,8 @@ program
   .option('-H, --hogan', 'add hogan.js engine support')
   .option('-c, --css <engine>', 'add stylesheet <engine> support (less|stylus) (defaults to plain css)')
   .option('-f, --force', 'force on non-empty directory')
+  .option('start', 'start your server')
+  .option('generate', 'generate new model/controller')
   .parse(process.argv);
 
 
@@ -38,6 +44,80 @@ if (program.ejs) program.template = 'ejs';
 if (program.jshtml) program.template = 'jshtml';
 if (program.hogan) program.template = 'hjs';
 
+
+// GENERATE A NEW MODEL/CONTROLLER PAIR
+if (program.generate) {
+
+    var name = path,
+        pkgFile = './package.json';
+        fileContent = fs.readFileSync(pkgFile),
+        pkg = JSON.parse(fileContent),
+        appName = pkg.name,
+        templates = './lib/templates/';
+        modelDir = './app/models/';
+        controllerDir = './app/controllers/';
+        model = templates + 'model/template.js';
+
+    // UPDATE MODEL
+    fs.readFile( templates + 'model.js' , function (err, data) {
+
+        if (err) {
+            console.log(err);
+        } else {
+            data = data.toString();
+            data = data.replace(new RegExp('{model}', 'g'), name);
+            fs.writeFileSync(modelDir + name + '.js', data);
+        }
+
+    });
+
+
+    // UPDATE CONTROLLER
+    fs.readFile( templates + 'controller.js' , function (err, data) {
+
+        if (err) {
+            console.log(err);
+        } else {
+
+            data = data.toString();
+            data = data.replace(new RegExp('{model}', 'g'), name);
+
+            fs.writeFileSync(controllerDir + name + 'Controller.js', data);
+        }
+
+    });
+
+
+    return false;
+
+} // END GENERATE
+
+
+if (program.start) {
+
+
+    spawn('grunt').stdout.on('data', function (data) {
+      console.log('' + data);
+    });
+
+
+    // // console.log(__dirname);
+
+    // var app = {
+    //     site : '',
+    //     config: ''
+    // };
+    // // var app.site = {};
+    // // var app.config = {};
+    // // var config = require('../app/config/config.js')(app);
+
+    // fileContent = fs.readFileSync('../app/config/config.js');
+    // // pkg = JSON.parse(fileContent);
+
+    // console.log(fileContent);
+
+    return false;
+}
 
 // Generate application
 
@@ -89,7 +169,11 @@ function createApplicationAt(path) {
     process.on('exit', function(){
 
         // CLEANUP UNUSED FOLDERS
-        rmdir(path + '/app/_templates');
+
+        ncp(__dirname + '/_src/app/_templates', path + '_lib', function (err) {
+            rmdir(path + '/app/_templates');
+        });
+
         fs.unlink(path + '/.git');
 
         // LET USER KNOW WE'RE DONE
@@ -130,27 +214,27 @@ function createApplicationAt(path) {
                 data = data.toString();
 
                 // UPDATE APP NAME
-                data = data.replace( 'tesla.js', path );
+                data = data.replace(new RegExp('tesla.js', 'g'), path);
 
                 // SET CSS ENGINE
                 switch (program.css) {
                     case 'sass':
                         pkg.dependencies.sass = 'latest';
-                        data = data.replace( 'css: "stylus"', 'css: "sass"' );
+                        data = data.replace(new RegExp('css: "stylus"', 'g'), 'css: "sass"');
                         break;
                     case 'less':
                         pkg.dependencies.less = 'latest';
-                        data = data.replace( 'css: "stylus"', 'css: "less' );
+                        data = data.replace(new RegExp('css: "stylus"', 'g'), 'css: "less"');
                         break;
                     case 'stylus':
                         pkg.dependencies.stylus = 'latest';
 
                         if (program.nib) {
                             pkg.dependencies.nib = "latest";
-                            data = data.replace( 'cssLibrary: false', 'cssLibrary: "nib"' );
+                            data = data.replace(new RegExp('cssLibrary: false', 'g'), 'cssLibrary: "nib"');
                         } else if (program.axis) {
                             pkg.dependencies['axis-css'] = "latest";
-                            data = data.replace( 'cssLibrary: false', 'cssLibrary: "axis"' );
+                            data = data.replace(new RegExp('cssLibrary: false', 'g'), 'cssLibrary: "axis"');
                         }
 
                         break;
@@ -162,7 +246,7 @@ function createApplicationAt(path) {
                 switch (program.template) {
                     case 'ejs':
                         pkg.dependencies.ejs = 'latest';
-                        data = data.replace( 'html: "jade"', 'html: "ejs"' );
+                        data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "ejs"');
                         rmdir(path + '/app/views');
                         ncp(__dirname + '/_src/app/_templates/views/ejs', path + '/app/views/', function (err) {
                             if (err) return console.error(err); // HANDLE ERRORS
@@ -174,7 +258,7 @@ function createApplicationAt(path) {
                         break;
                     case 'jshtml':
                         pkg.dependencies['jshtml-express'] = 'latest';
-                        data = data.replace( 'html: "jade"', 'html: "jshtml"' );
+                        data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "jshtml"');
                         rmdir(path + '/app/views');
                         ncp(__dirname + '/_src/app/_templates/views/jshtml', path + '/app/views/', function (err) {
                             if (err) return console.error(err); // HANDLE ERRORS
@@ -182,7 +266,7 @@ function createApplicationAt(path) {
                         break;
                     case 'hjs':
                         pkg.dependencies['express-hogan'] = 'latest';
-                        data = data.replace( 'html: "jade"', 'html: "hjs"' );
+                        data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "hjs"');
                         rmdir(path + '/app/views');
                         ncp(__dirname + '/_src/app/_templates/views/hjs', path + '/app/views/', function (err) {
                             if (err) return console.error(err); // HANDLE ERRORS
