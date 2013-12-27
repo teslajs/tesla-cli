@@ -27,8 +27,8 @@ program
   .option('-H, --hogan', 'add hogan.js engine support')
   .option('-c, --css <engine>', 'add stylesheet <engine> support (less|stylus) (defaults to plain css)')
   .option('-f, --force', 'force on non-empty directory')
-  .option('start', 'start your server')
-  .option('generate', 'generate new model/controller')
+  .option('start', 'start the web server (still a bit buggy, best just just run "grunt" for now)')
+  .option('generate', 'generate new model + controller with basic CRUD functionality')
   .parse(process.argv);
 
 
