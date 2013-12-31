@@ -19,8 +19,8 @@ program
   .version(version)
   .usage('[options] [dir]')
   .option('-H, --html <template>', 'set html teplating engine: ejs|hjs|jshtml}hogan|jade (default)')
-  .option('-c, --css <engine>', 'add stylesheet <engine> support (less|stylus) (defaults to plain css)')
-  .option('-f, --force', 'force on non-empty directory')
+  .option('-C, --css <engine>', 'add stylesheet <engine> support (less|stylus) (defaults to plain css)')
+  .option('-F, --force', 'force on non-empty directory')
   .option('start', 'start the web server (still a bit buggy, best just just run "grunt" for now)')
   .option('generate', 'generate new model + controller with basic CRUD functionality')
   // FE FRAMEWORKS
@@ -30,12 +30,12 @@ program
   // JS LIBRARIES
   .option('--jquery', 'add support for jquery')
   .option('--mootools', 'add support for mootools')
-  .option('--zepto', 'add support for zepto')
+  .option('--zepto, --zeptojs', 'add support for zepto')
   // PREPROCESSOR LIBRARIES
   .option('--axis', 'add axis support to stylus')
   .option('--bourbon', 'add nib support to stylus')
   .option('--nib', 'add nib support to stylus')
-  // CSS LIBRARIES
+  // CSS FRAMEWORKS
   .option('--bootstrap', 'add support for bootstrap')
   .option('--foundation', 'add support for foundation')
   .option('--gumby', 'add support for gumby')
