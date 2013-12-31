@@ -3,32 +3,43 @@
 
 // MODULE DENEPDENCIES
 var mkdirp = require('mkdirp'),
-    ncp = require('ncp').ncp,
     colors = require('colors'),
-    program = require('commander'),
-    pkg = require('../package.json'),
-    version = pkg.version,
     exec = require('child_process').exec,
-    spawn = require('child_process').spawn,
-    child,
+    fs = require('fs'),
+    ncp = require('ncp').ncp,
     os = require('os'),
-    fs = require('fs');
+    pkg = require('../package.json'),
+    program = require('commander'),
+    spawn = require('child_process').spawn,
+    version = pkg.version;
 
 
 // CLI
 program
   .version(version)
   .usage('[options] [dir]')
-  // .option('-s, --sessions', 'add session support')
-  .option('-e, --ejs', 'add ejs engine support (defaults to jade)')
-  .option('--nib', 'add nib support to stylus')
-  .option('--axis', 'add axis support to stylus')
-  .option('-J, --jshtml', 'add jshtml engine support (defaults to jade)')
-  .option('-H, --hogan', 'add hogan.js engine support')
+  .option('-H, --html <template>', 'set html teplating engine: ejs|hjs|jshtml}hogan|jade (default)')
   .option('-c, --css <engine>', 'add stylesheet <engine> support (less|stylus) (defaults to plain css)')
   .option('-f, --force', 'force on non-empty directory')
   .option('start', 'start the web server (still a bit buggy, best just just run "grunt" for now)')
   .option('generate', 'generate new model + controller with basic CRUD functionality')
+  // FE FRAMEWORKS
+  .option('--angular', 'add support for angular')
+  .option('--backbone', 'add support for backbone')
+  .option('--ember', 'add support for ember')
+  // JS LIBRARIES
+  .option('--jquery', 'add support for jquery')
+  .option('--mootools', 'add support for mootools')
+  .option('--zepto', 'add support for zepto')
+  // PREPROCESSOR LIBRARIES
+  .option('--axis', 'add axis support to stylus')
+  .option('--bourbon', 'add nib support to stylus')
+  .option('--nib', 'add nib support to stylus')
+  // CSS LIBRARIES
+  .option('--bootstrap', 'add support for bootstrap')
+  .option('--foundation', 'add support for foundation')
+  .option('--gumby', 'add support for gumby')
+  .option('--skeleton', 'add support for skeleton')
   .parse(process.argv);
 
 
@@ -38,14 +49,16 @@ var path = program.args.shift() || '.';
 // end-of-line code
 var eol = os.EOL
 
-// Template engine
-program.template = 'jade';
-if (program.ejs) program.template = 'ejs';
-if (program.jshtml) program.template = 'jshtml';
-if (program.hogan) program.template = 'hjs';
+// SET TEMPLATE ENGINE
+program.template = 'jade'; // JADE
+if ( program.html === 'ejs' ) program.template = 'ejs'; // EJS
+if ( program.html === 'hogan' ) program.template = 'hogan'; // HOGAN
+if ( program.html === 'handlebars' ) program.template = 'handlebars';  // HANDLEBARS
+if ( program.html === 'mustache' ) program.template = 'mustache';  // MUSTACHE
 
 
-// GENERATE A NEW MODEL/CONTROLLER PAIR
+
+// SCAFFOLDING FOR MODELS/CONTROLLERS
 if (program.generate) {
 
     var name = path,
@@ -87,257 +100,42 @@ if (program.generate) {
 
     });
 
+    process.on('exit', function(){
+        console.log('');
+        console.log('Success!'.white + ' Tesla has generated 2 new files for you:'.white);
+        console.log('-> app/models/'.green + name.green + '.js'.green);
+        console.log('-> app/controllers/'.green + name.green + 'Controller.js'.green);
+        console.log('');
+        console.log('The following URL\'s are now ready to use:'.white);
+        console.log('-> '.blue + name.blue + '/all'.blue + '  list all items in collection/table'.grey);
+        console.log('-> '.blue + name.blue + '/create'.blue + '  create new record'.grey);
+        console.log('-> '.blue + name.blue + '/delete/:id'.blue + '  delete record with id ":id"'.grey);
+        console.log('-> '.blue + name.blue + '/find'.blue + '  find items that match a query'.grey);
+        console.log('-> '.blue + name.blue + '/update/:id'.blue + '  update item with id ":id"'.grey);
+        console.log('');
+        console.log('Be sure you set the schema for your model in '.white + 'app/models/'.blue + name.blue + '.js'.blue);
+        console.log('');
+        console.log('Check out the docs for help or more info: '.white + 'https://github.com/teslajs/tesla.js#working-with-data'.blue);
+        console.log('');
+    });
 
     return false;
 
 } // END GENERATE
 
 
-if (program.start) {
+// START THE SERVER
+if (program.generate) {
 
-
-    spawn('grunt').stdout.on('data', function (data) {
-      console.log('' + data);
-    });
-
-
-    // // console.log(__dirname);
-
-    // var app = {
-    //     site : '',
-    //     config: ''
-    // };
-    // // var app.site = {};
-    // // var app.config = {};
-    // // var config = require('../app/config/config.js')(app);
-
-    // fileContent = fs.readFileSync('../app/config/config.js');
-    // // pkg = JSON.parse(fileContent);
-
-    // console.log(fileContent);
-
-    return false;
-}
-
-// Generate application
-
-(function createApplication(path) {
-    emptyDirectory(path, function(empty){
-        if (empty || program.force) {
-            createApplicationAt(path);
-        } else {
-            console.log();
-            program.confirm('destination is not empty, continue? ', function(ok){
-                if (ok) {
-                    process.stdin.destroy();
-                    createApplicationAt(path);
-                } else {
-                    abort('aborting');
-                }
-            });
-        }
-    });
-})(path);
-
-function cleanup() {
-
-
-}
-
-
-// REMOVE A DIRECTORY
-function rmdir(path) {
-  if( fs.existsSync(path) ) {
-    fs.readdirSync(path).forEach(function(file,index){
-      var curPath = path + "/" + file;
-      if(fs.statSync(curPath).isDirectory()) { // recurse
-        rmdir(curPath);
-      } else { // delete file
-        fs.unlinkSync(curPath);
-      }
-    });
-    fs.rmdirSync(path);
-  }
-};
-
-
-
-// NEEDS SOME UPDATE TO WORK WITH DYNAMIC ENGINES
-function createApplicationAt(path) {
-
-    console.log();
-    process.on('exit', function(){
-
-        // CLEANUP UNUSED FOLDERS
-
-        ncp(__dirname + '/_src/app/_templates', path + '_lib', function (err) {
-            rmdir(path + '/app/_templates');
+        spawn('grunt').stdout.on('data', function (data) {
+          console.log('' + data);
         });
 
-        fs.unlink(path + '/.git');
+        return false;
 
-        // LET USER KNOW WE'RE DONE
-        console.log();
-        console.log('   install dependencies:');
-        console.log('     $ cd %s && npm install', path);
-        console.log();
-        console.log('   run the app:');
-        console.log('     $ grunt');
-        console.log();
-    });
-
-    mkdir(path, function(){
-
-        ncp(__dirname + '/_src', path, function (err) {
-
-            // HANDLE ERRORS
-            if (err) {
-                return console.error(err);
-            }
-
-            // UPDATE PACKAGE FILE
-            var pkgFile = path + '/package.json',
-                fileContent = fs.readFileSync(pkgFile),
-                pkg = JSON.parse(fileContent);
-
-            pkg.name = path;
-
-            // OPEN CONFIG FILE
-            var cfgFile = path + '/config/config.js';
-
-            fs.readFile( cfgFile, function (err, data) {
-
-                if (err) {
-                    return console.error(err);
-                }
-
-                data = data.toString();
-
-                // UPDATE APP NAME
-                data = data.replace(new RegExp('tesla.js', 'g'), path);
-
-                // SET CSS ENGINE
-                switch (program.css) {
-                    case 'sass':
-                        pkg.dependencies.sass = 'latest';
-                        data = data.replace(new RegExp('css: "stylus"', 'g'), 'css: "sass"');
-                        break;
-                    case 'less':
-                        pkg.dependencies.less = 'latest';
-                        data = data.replace(new RegExp('css: "stylus"', 'g'), 'css: "less"');
-                        break;
-                    case 'stylus':
-                        pkg.dependencies.stylus = 'latest';
-
-                        if (program.nib) {
-                            pkg.dependencies.nib = "latest";
-                            data = data.replace(new RegExp('cssLibrary: false', 'g'), 'cssLibrary: "nib"');
-                        } else if (program.axis) {
-                            pkg.dependencies['axis-css'] = "latest";
-                            data = data.replace(new RegExp('cssLibrary: false', 'g'), 'cssLibrary: "axis"');
-                        }
-
-                        break;
-                    default:
-                }
+} // END START
 
 
-                // SET TEMPLATING ENGINE
-                switch (program.template) {
-                    case 'ejs':
-                        pkg.dependencies.ejs = 'latest';
-                        data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "ejs"');
-                        rmdir(path + '/app/views');
-                        ncp(__dirname + '/_src/app/_templates/views/ejs', path + '/app/views/', function (err) {
-                            if (err) return console.error(err); // HANDLE ERRORS
-                            // fs.renameSync(path + '/app/ejs', path + '/app/views');
-                        });
-                        break;
-                    case 'jade':
-                        pkg.dependencies.jade = 'latest';
-                        break;
-                    case 'jshtml':
-                        pkg.dependencies['jshtml-express'] = 'latest';
-                        data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "jshtml"');
-                        rmdir(path + '/app/views');
-                        ncp(__dirname + '/_src/app/_templates/views/jshtml', path + '/app/views/', function (err) {
-                            if (err) return console.error(err); // HANDLE ERRORS
-                        });
-                        break;
-                    case 'hjs':
-                        pkg.dependencies['express-hogan'] = 'latest';
-                        data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "hjs"');
-                        rmdir(path + '/app/views');
-                        ncp(__dirname + '/_src/app/_templates/views/hjs', path + '/app/views/', function (err) {
-                            if (err) return console.error(err); // HANDLE ERRORS
-                        });
-                        break;
-                    default:
-
-                }
-
-                fs.writeFileSync(cfgFile, data); // WRITE CONFIG FILE
-                fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 4)); // WRITE PACKAGE FILE
-
-            });
-
-            // REMOVE UNNEEDED FILES
-
-        });
-    });
-}
-
-/**
- * Check if the given directory `path` is empty.
- *
- * @param {String} path
- * @param {Function} fn
- */
-
-function emptyDirectory(path, fn) {
-  fs.readdir(path, function(err, files){
-    if (err && 'ENOENT' != err.code) throw err;
-    fn(!files || !files.length);
-  });
-}
-
-
-/**
- * echo str > path.
- *
- * @param {String} path
- * @param {String} str
- */
-
-function write(path, str) {
-  fs.writeFile(path, str);
-  console.log('   \x1b[36mcreate\x1b[0m : ' + path);
-}
-
-
-/**
- * Mkdir -p.
- *
- * @param {String} path
- * @param {Function} fn
- */
-
-function mkdir(path, fn) {
-  mkdirp(path, 0755, function(err){
-    if (err) throw err;
-    console.log('   \033[36mcreate\033[0m : ' + path);
-    fn && fn();
-  });
-}
-
-
-/**
- * Exit with the given `str`.
- *
- * @param {String} str
- */
-
-function abort(str) {
-  console.error(str);
-  process.exit(1);
-}
+// BUILD APPLICATION
+var build = require('./build')();
+build.createApplication( program, path );
