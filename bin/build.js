@@ -107,6 +107,8 @@ module.exports = function ( program ) {
                                 break;
 
                             default:
+
+                                data = data.replace(new RegExp('css: "stylus"', 'g'), 'css: false');
                         }
 
 
@@ -118,7 +120,7 @@ module.exports = function ( program ) {
                                 console.log('   Setting view template to '.white + 'EJS'.blue);
 
                                 pkg.dependencies.ejs = 'latest';
-                                scriptTemplate = '<script src="<%= site.dir.lib %>{{src}}" />' + "\n";
+                                scriptTemplate = '<script src="<%= site.dir.lib %>{{src}}" ></script>' + "\n";
                                 styleTemplate = '<link rel="stylesheet" href="<%= site.dir.lib %>{{src}}">' + "\n";
                                 data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "ejs"');
                                 wrench.rmdirSyncRecursive(path + '/app/views');
@@ -139,7 +141,7 @@ module.exports = function ( program ) {
                                 console.log('   Setting view template to '.white + 'Handlebars'.blue);
 
                                 pkg.dependencies['hbs'] = 'latest';
-                                scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" />' + "\n";
+                                scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
                                 styleTemplate = '<link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
                                 data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "hbs"');
                                 wrench.rmdirSyncRecursive(path + '/app/views');
@@ -161,7 +163,7 @@ module.exports = function ( program ) {
                                 console.log('   Setting view template to '.white + 'Hogan'.blue);
 
                                 pkg.dependencies['hogan-middleware'] = 'latest';
-                                scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" />' + "\n";
+                                scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
                                 styleTemplate = '<link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
                                 data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "hogan"');
                                 wrench.rmdirSyncRecursive(path + '/app/views');
@@ -203,7 +205,7 @@ module.exports = function ( program ) {
                                 console.log('   Setting view template to '.white + 'Mustache'.blue);
 
                                 pkg.dependencies['mustache-express'] = 'latest';
-                                scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" />' + "\n";
+                                scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
                                 styleTemplate = '<link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
 
                                 data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "mustache"');
@@ -227,7 +229,7 @@ module.exports = function ( program ) {
 
                         // PREPROCESSOR LIBRARIES
                         if (program.axis) {
-                            pkg.dependencies.axis = "latest";
+                            pkg.dependencies['axis-css'] = "latest";
                             data = data.replace(new RegExp('cssLibrary: false', 'g'), 'cssLibrary: "axis"');
                             console.log('   Adding support for '.white + 'Axis'.blue);
                         }
