@@ -90,19 +90,22 @@ module.exports = function ( program ) {
 
                                 pkg.dependencies['node-sass'] = 'latest';
                                 data = data.replace(new RegExp('css: "stylus"', 'g'), 'css: "sass"');
+                                fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.scss').pipe(fs.createWriteStream(path + '/public/css/styles.scss'));
                                 console.log('   Setting CSS preprocessor to '.white + 'SASS'.blue);
                                 break;
 
                             case 'less':
 
-                                pkg.dependencies.less = 'latest';
+                                pkg.dependencies['less-middleware'] = 'latest';
                                 data = data.replace(new RegExp('css: "stylus"', 'g'), 'css: "less"');
+                                fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.less').pipe(fs.createWriteStream(path + '/public/css/styles.less'));
                                 console.log('   Setting CSS preprocessor to '.white + 'LESS'.blue);
                                 break;
 
                             case 'stylus':
 
                                 pkg.dependencies.stylus = 'latest';
+                                fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.styl').pipe(fs.createWriteStream(path + '/public/css/styles.styl'));
                                 console.log('   Setting CSS preprocessor to '.white + 'Stylus'.blue);
                                 break;
 
