@@ -88,7 +88,7 @@ module.exports = function ( program ) {
                         switch (program.css) {
                             case 'sass':
 
-                                pkg.dependencies.sass = 'latest';
+                                pkg.dependencies['node-sass'] = 'latest';
                                 data = data.replace(new RegExp('css: "stylus"', 'g'), 'css: "sass"');
                                 console.log('   Setting CSS preprocessor to '.white + 'SASS'.blue);
                                 break;
