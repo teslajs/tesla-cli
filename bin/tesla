@@ -40,6 +40,8 @@ program
   .option('--foundation', 'add support for foundation')
   .option('--gumby', 'add support for gumby')
   .option('--skeleton', 'add support for skeleton')
+  // DATABASES
+  .option('--db <type>', 'mongo|mysql|parse|postgress|sqlite')
   .parse(process.argv);
 
 
@@ -67,26 +69,33 @@ if (program.generate) {
         pkg = JSON.parse(fileContent),
         appName = pkg.name,
         templates = './lib/templates/';
-        modelDir = './app/models/';
-        controllerDir = './app/controllers/';
-        model = templates + 'model/template.js';
+        modelDir = './app/models/',
+        modelFile = 'model.js',
+        controllerDir = './app/controllers/',
+        controllerFile = 'controller.js';
+
+    // OVERRIDE FILE NAME IF WE'RE USING PARSE
+    if ( program.db === 'parse' ) {
+      modelFile = 'model.parse.js';
+      controllerFile = 'controller.parse.js';
+    }
 
     // UPDATE MODEL
-    fs.readFile( templates + 'model.js' , function (err, data) {
+    fs.readFile( templates + modelFile , function (err, data) {
 
-        if (err) {
-            console.log(err);
-        } else {
-            data = data.toString();
-            data = data.replace(new RegExp('{model}', 'g'), name);
-            fs.writeFileSync(modelDir + name + '.js', data);
-        }
+      if (err) {
+          console.log(err);
+      } else {
+          data = data.toString();
+          data = data.replace(new RegExp('{model}', 'g'), name);
+          fs.writeFileSync(modelDir + name + '.js', data);
+      }
 
     });
 
 
     // UPDATE CONTROLLER
-    fs.readFile( templates + 'controller.js' , function (err, data) {
+    fs.readFile( templates + controllerFile , function (err, data) {
 
         if (err) {
             console.log(err);
