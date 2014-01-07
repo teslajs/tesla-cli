@@ -7,7 +7,7 @@ env:
 branches:
   only:
     - master
-script: "./bin/tesla testapp --css stylus --nib"
+script: "./bin/tesla testapp --css stylus --zepto --foundation --angular"
 after_script:
     - cd testapp
     - sudo npm install
