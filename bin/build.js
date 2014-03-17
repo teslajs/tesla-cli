@@ -357,7 +357,7 @@ module.exports = function ( program ) {
                 console.log('   To get up & running, you just need to run these 2 commands:'.white);
                 console.log();
                 console.log('   1. install dependencies:'.blue + '      you only need to do this once'.grey);
-                console.log('      $'.grey + ' cd %s && sudo npm install'.white, path);
+                console.log('      $'.grey + ' cd %s && npm install'.white, path);
                 console.log();
                 console.log('   2. launch the app with grunt:'.blue);
                 console.log('      $'.grey + ' tesla start'.white);
