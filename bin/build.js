@@ -110,7 +110,7 @@ module.exports = function ( program ) {
                                 break;
 
                             default:
-
+                                fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.css').pipe(fs.createWriteStream(path + '/public/css/styles.css'));
                                 data = data.replace(new RegExp('css: "stylus"', 'g'), 'css: false');
                         }
 
