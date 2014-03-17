@@ -21,7 +21,7 @@ program
   .option('-H, --html <template>', 'set html teplating engine: ejs|hjs|jshtml}hogan|jade (default)')
   .option('-C, --css <engine>', 'add stylesheet <engine> support (less|stylus) (defaults to plain css)')
   .option('-F, --force', 'force on non-empty directory')
-  .option('start', 'start the web server (still a bit buggy, best just just run "grunt" for now)')
+  .option('start', 'start the web server (still a bit buggy, best just just run "grunt" or "gulp" for now)')
   .option('generate', 'generate new model + controller with basic CRUD functionality')
   // FE FRAMEWORKS
   .option('--angular', 'add support for angular')
@@ -134,13 +134,13 @@ if (program.generate) {
 
 
 // START THE SERVER
-if (program.generate) {
+if (program.start) {
 
-        spawn('grunt').stdout.on('data', function (data) {
-          console.log('' + data);
-        });
+  spawn('gulp').stdout.on('data', function (data) {
+    console.log(data.toString());
+  });
 
-        return false;
+  return false;
 
 } // END START
 
