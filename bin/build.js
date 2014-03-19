@@ -67,8 +67,17 @@ module.exports = function ( program ) {
                         fileContent = fs.readFileSync(bowerFile),
                         bower = JSON.parse(fileContent);
 
-
+                    // UPDATE PACKAGE SETTINGS
                     pkg.name = path;
+                    pkg.description = '';
+                    pkg.version = 0.0.2;
+                    pkg.contributors.name = '';
+                    pkg.repository.type = 'git';
+                    pkg.repository.url = '';
+                    pkg.bugs.url = '';
+                    pkg.licenses.type = '';
+                    pkg.licenses.url = '';
+
 
                     // OPEN CONFIG FILE
                     var cfgFile = path + '/config/config.js';
