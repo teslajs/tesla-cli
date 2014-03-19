@@ -69,15 +69,13 @@ module.exports = function ( program ) {
 
                     // UPDATE PACKAGE SETTINGS
                     pkg.name = path;
-                    pkg.description = '';
-                    pkg.version = 0.0.2;
-                    pkg.contributors.name = '';
-                    pkg.repository.type = 'git';
-                    pkg.repository.url = '';
-                    pkg.bugs.url = '';
-                    pkg.licenses.type = '';
-                    pkg.licenses.url = '';
-
+                    pkg.description = "";
+                    pkg.version = "0.0.1";
+                    pkg.contributors = "";
+                    pkg.homepage = "";
+                    pkg.repository = "";
+                    pkg.bugs = "";
+                    pkg.licenses = "";
 
                     // OPEN CONFIG FILE
                     var cfgFile = path + '/config/config.js';
