@@ -102,7 +102,7 @@ if (program.generate) {
         } else {
 
             data = data.toString();
-            data = data.replace(new RegExp('{model}', 'g'), name);
+            data = data.replace(new RegExp('{model}', 'g'), name + 'Model');
 
             fs.writeFileSync(controllerDir + name + 'Controller.js', data);
         }
@@ -112,7 +112,7 @@ if (program.generate) {
     process.on('exit', function(){
         console.log('');
         console.log('Success!'.white + ' Tesla has generated 2 new files for you:'.white);
-        console.log('-> app/models/'.green + name.green + '.js'.green);
+        console.log('-> app/models/'.green + name.green + 'Model.js'.green);
         console.log('-> app/controllers/'.green + name.green + 'Controller.js'.green);
         console.log('');
         console.log('The following URL\'s are now ready to use:'.white);
