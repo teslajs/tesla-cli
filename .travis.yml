@@ -7,7 +7,9 @@ env:
 branches:
   only:
     - master
-script: "./bin/tesla testapp --html hogan --css sass --zepto --foundation --angular"
+    - rc
+script: "./bin/tesla myapp --html hogan --css less --angular --backbone --ember --bootstrap --foundation --gumby --skeleton --jquery --modernizr --zepto"
+
 after_script:
     - cd testapp
     - sudo npm install
