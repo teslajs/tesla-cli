@@ -316,7 +316,7 @@ module.exports = function ( program ) {
                         if (program.gumby) {
                             bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'gumby/css/gumby.css');
                             bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'gumby/css/style.css');
-                            if (!program.modernizr) headSpace + bowerHeadScripts = bowerHeadScripts + scriptTemplate.replace('{{src}}', 'modernizr/modernizr.js');
+                            if (!program.modernizr) bowerHeadScripts = headSpace + bowerHeadScripts + scriptTemplate.replace('{{src}}', 'modernizr/modernizr.js');
                             if ( !program.jquery ) bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'gumby/js/libs/jquery-2.0.2.min.js');
                             bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'gumby/js/libs/gumby.min.js');
                             bower.dependencies.gumby = 'latest';
@@ -333,12 +333,8 @@ module.exports = function ( program ) {
 
                             bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'foundation/css/normalize.css');
                             bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'foundation/css/foundation.min.css');
-                            if ( !program.modernizr ) {
-                                headSpace + bowerHeadScripts = bowerHeadScripts + scriptTemplate.replace('{{src}}', 'modernizr/modernizr.js');
-                            }
-                            if ( !program.jquery ) {
-                                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'jquery/dist/jquery.min.js');
-                            }
+                            if ( !program.modernizr ) bowerHeadScripts = headSpace + bowerHeadScripts + scriptTemplate.replace('{{src}}', 'modernizr/modernizr.js');
+                            if ( !program.jquery ) bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'jquery/dist/jquery.min.js');
                             bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'fastclick/lib/fastclick.js');
                             bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'foundation/js/foundation.min.js');
 
