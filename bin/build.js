@@ -333,8 +333,12 @@ module.exports = function ( program ) {
 
                             bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'foundation/css/normalize.css');
                             bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'foundation/css/foundation.min.css');
-                            if (!program.modernizr) headSpace + bowerHeadScripts = bowerHeadScripts + scriptTemplate.replace('{{src}}', 'modernizr/modernizr.js');
-                            if ( !program.jquery ) bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'jquery/dist/jquery.min.js');
+                            if ( !program.modernizr ) {
+                                headSpace + bowerHeadScripts = bowerHeadScripts + scriptTemplate.replace('{{src}}', 'modernizr/modernizr.js');
+                            }
+                            if ( !program.jquery ) {
+                                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'jquery/dist/jquery.min.js');
+                            }
                             bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'fastclick/lib/fastclick.js');
                             bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'foundation/js/foundation.min.js');
 
