@@ -78,7 +78,7 @@ module.exports = function ( program ) {
                     pkg.licenses = "";
 
                     // OPEN CONFIG FILE
-                    var cfgFile = path + '/config/config.js';
+                    var cfgFile = path + '/config/_settings.js';
 
                     fs.readFile( cfgFile, function (err, data) {
 
@@ -134,7 +134,7 @@ module.exports = function ( program ) {
 
                                 pkg.dependencies.ejs = 'latest';
                                 scriptTemplate = '<script src="<%= site.dir.lib %>{{src}}" ></script>' + "\n";
-                                styleTemplate = '<link rel="stylesheet" href="<%= site.dir.lib %>{{src}}">' + "\n";
+                                styleTemplate = '        <link rel="stylesheet" href="<%= site.dir.lib %>{{src}}">' + "\n";
                                 data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "ejs"');
                                 wrench.rmdirSyncRecursive(path + '/app/views');
                                 wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/views/ejs', path + '/app/views/');
@@ -155,7 +155,7 @@ module.exports = function ( program ) {
 
                                 pkg.dependencies['hbs'] = 'latest';
                                 scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
-                                styleTemplate = '<link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
+                                styleTemplate = '        <link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
                                 data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "hbs"');
                                 wrench.rmdirSyncRecursive(path + '/app/views');
                                 wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/views/handlebars', path + '/app/views/');
@@ -175,9 +175,11 @@ module.exports = function ( program ) {
 
                                 console.log('   Setting view template to '.white + 'Hogan'.blue);
 
+                                var headSpace  = '        ';
+
                                 pkg.dependencies['hogan-middleware'] = 'latest';
                                 scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
-                                styleTemplate = '<link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
+                                styleTemplate = '        <link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
                                 data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "hogan"');
                                 wrench.rmdirSyncRecursive(path + '/app/views');
                                 wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/views/hogan', path + '/app/views/');
@@ -192,34 +194,13 @@ module.exports = function ( program ) {
 
                                 break;
 
-                            case 'jade':
-
-                                console.log('   Setting view template to '.white + 'Jade'.blue);
-
-                                pkg.dependencies.jade = 'latest';
-                                scriptTemplate = "script(src='#{site.dir.lib}{{src}}')\n";
-                                styleTemplate = 'link(rel="stylesheet", href="#{site.dir.lib}{{src}}")' + "\n";
-
-                                wrench.rmdirSyncRecursive(path + '/app/views');
-                                wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/views/jade', path + '/app/views/');
-
-                                // UPDATE SCRIPT FILE
-                                var scriptFile = path + '/app/views/_inc/footer.jade',
-                                    scriptContent = fs.readFileSync(scriptFile);
-
-                                // UPDATE STYLE FILE
-                                var styleFile = path + '/app/views/_inc/header.jade',
-                                    styleContent = fs.readFileSync(styleFile);
-
-                                break;
-
                             case 'mustache':
 
                                 console.log('   Setting view template to '.white + 'Mustache'.blue);
 
                                 pkg.dependencies['mustache-express'] = 'latest';
                                 scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
-                                styleTemplate = '<link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
+                                styleTemplate = '        <link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
 
                                 data = data.replace(new RegExp('html: "jade"', 'g'), 'html: "mustache"');
                                 wrench.rmdirSyncRecursive(path + '/app/views');
@@ -236,6 +217,25 @@ module.exports = function ( program ) {
                                 break;
 
                             default:
+
+                                console.log('   Setting view template to '.white + 'Jade'.blue);
+
+                                var headSpace  = '    ';
+
+                                pkg.dependencies.jade = 'latest';
+                                scriptTemplate = "script(src='#{site.dir.lib}{{src}}')\n";
+                                styleTemplate = '    link(rel="stylesheet", href="#{site.dir.lib}{{src}}")' + "\n";
+
+                                wrench.rmdirSyncRecursive(path + '/app/views');
+                                wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/views/jade', path + '/app/views/');
+
+                                // UPDATE SCRIPT FILE
+                                var scriptFile = path + '/app/views/_inc/footer.jade',
+                                    scriptContent = fs.readFileSync(scriptFile);
+
+                                // UPDATE STYLE FILE
+                                var styleFile = path + '/app/views/_inc/header.jade',
+                                    styleContent = fs.readFileSync(styleFile);
 
                         }
 
@@ -259,11 +259,30 @@ module.exports = function ( program ) {
 
                         var self = this, bowerScripts = '', bowerStyles = '';
 
+                        bowerHeadScripts = '';
                         scriptContent = scriptContent.toString();
                         styleContent = styleContent.toString();
 
                         // ADD PACKAGES TO BOWER
 
+
+                        // JS LIBRARIES
+                        if (program.jquery) {
+                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'jquery/dist/jquery.min.js');
+                            bower.dependencies.jquery = 'latest';
+                            console.log('   Adding support for '.white + 'jQuery'.blue);
+                        }
+                        if (program.zepto) {
+                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'zepto/zepto.min.js');
+                            bower.dependencies.zepto = 'latest';
+                            console.log('   Adding support for '.white + 'Zepto.js'.blue);
+                        }
+
+                        if (program.modernizr) {
+                            bowerHeadScripts = headSpace + bowerHeadScripts + scriptTemplate.replace('{{src}}', 'modernizr/modernizr.js');
+                            bower.dependencies.modernizr = 'latest';
+                            console.log('   Adding support for '.white + 'Modernizr'.blue);
+                        }
 
                         // FE FRAMEWORKS
                         if (program.angular) {
@@ -272,54 +291,34 @@ module.exports = function ( program ) {
                             console.log('   Adding support for '.white + 'Angular'.blue);
                         }
                         if (program.backbone) {
-                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'backbone/backbone-min.js');
+                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'underscore/underscore.js');
+                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'backbone/backbone.js');
                             bower.dependencies.backbone = 'latest';
                             console.log('   Adding support for '.white + 'Backbone'.blue);
                         }
                         if (program.ember) {
+                            if ( !program.jquery ) bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'jquery/dist/jquery.min.js');
+                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'handlebars/handlebars.min.js');
                             bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'ember/ember.min.js');
                             bower.dependencies.ember = 'latest';
                             console.log('   Adding support for '.white + 'Ember'.blue);
                         }
 
-                        // JS LIBRARIES
-                        if (program.jquery) {
-                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'jquery/jquery.min/js');
-                            bower.dependencies.jquery = 'latest';
-                            console.log('   Adding support for '.white + 'jQuery'.blue);
-                        }
-                        if (program.mootools) {
-                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'mootools/Source/Core/Core.js');
-                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'mootools/Source/Browser/Browser.js');
-                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'mootools/Source/Class/Class.js');
-                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'mootools/Source/Element/Element.js');
-                            bower.dependencies['mootools'] = 'latest';
-                            console.log('   Adding support for '.white + 'MooTools'.blue);
-                        }
-                        if (program.zepto) {
-                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'zepto/zepto.min/js');
-                            bower.dependencies.zepto = 'latest';
-                            console.log('   Adding support for '.white + 'Zepot.js'.blue);
-                        }
-
 
                         // CSS LIBRARIES
                         if (program.bootstrap) {
-                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'bootstrap/bootstrap.min.js');
+                            bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'bootstrap/dist/css/bootstrap.min.css');
+                            bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'bootstrap/dist/css/bootstrap-theme.min.css');
+                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'bootstrap/dist/js/bootstrap.min.js');
                             bower.dependencies.bootstrap = 'latest';
                             console.log('   Adding support for '.white + 'Bootstrap'.blue);
-                        }
-                        if (program.foundation) {
-                            bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'foundation/css/foundation.min.css');
-                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'foundation/js/foundation.min.js');
-                            bower.dependencies.foundation = 'latest';
-                            console.log('   Adding support for '.white + 'Foundation'.blue);
                         }
                         if (program.gumby) {
                             bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'gumby/css/gumby.css');
                             bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'gumby/css/style.css');
-                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'gumby/js/main.js');
-                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'gumby/js/plugins.js');
+                            if (!program.modernizr) headSpace + bowerHeadScripts = bowerHeadScripts + scriptTemplate.replace('{{src}}', 'modernizr/modernizr.js');
+                            if ( !program.jquery ) bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'gumby/js/libs/jquery-2.0.2.min.js');
+                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'gumby/js/libs/gumby.min.js');
                             bower.dependencies.gumby = 'latest';
                             console.log('   Adding support for '.white + 'Gumby'.blue);
                         }
@@ -330,8 +329,28 @@ module.exports = function ( program ) {
                             bower.dependencies.skeleton = 'latest';
                             console.log('   Adding support for '.white + 'Skeleton'.blue);
                         }
+                        if (program.foundation) {
+
+                            bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'foundation/css/normalize.css');
+                            bowerStyles = bowerStyles + styleTemplate.replace('{{src}}', 'foundation/css/foundation.min.css');
+                            if (!program.modernizr) headSpace + bowerHeadScripts = bowerHeadScripts + scriptTemplate.replace('{{src}}', 'modernizr/modernizr.js');
+                            if ( !program.jquery ) bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'jquery/dist/jquery.min.js');
+                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'fastclick/lib/fastclick.js');
+                            bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'foundation/js/foundation.min.js');
+
+                            if ( program.template === 'jade' ) {
+                                bowerScripts = bowerScripts + 'script $(document).foundation();';
+                            } else {
+                                bowerScripts = bowerScripts + '<script>$(document).foundation();</script>';
+                            }
+
+                            bower.dependencies.foundation = 'latest';
+                            console.log('   Adding support for '.white + 'Foundation'.blue);
+
+                        }
 
 
+                        styleContent = styleContent.replace(new RegExp('{{bowerHead}}', 'g'), '{{bowerHead}}' + "\n" + bowerHeadScripts);
                         styleContent = styleContent.replace(new RegExp('{{bowerHead}}', 'g'), bowerStyles);
                         scriptContent = scriptContent.replace(new RegExp('{{bowerFoot}}', 'g'), bowerScripts);
 
@@ -380,92 +399,6 @@ module.exports = function ( program ) {
             });
 
         }, // END CREATE APPLICATION AT
-
-
-        packages : function ( program, path, scriptFile, scriptContent, scriptTemplate, styleFile, styleContent ) {
-
-            // UPDATE PACKAGE FILE
-            var bowerFile = path + '/bower.json',
-                fileContent = fs.readFileSync(bowerFile),
-                bower = JSON.parse(fileContent);
-
-            console.log('Setting packages');
-
-            var self = this, bowerScripts = '', bowerStyles = '';
-
-            console.log('script file: ' + scriptFile);
-
-            scriptContent = scriptContent.toString();
-            styleContent = styleContent.toString();
-
-            // ADD PACKAGES TO BOWER
-
-
-            // FE FRAMEWORKS
-            if (program.angular) {
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'angular/angular.min.js');
-                bower.dependencies.angular = 'latest';
-            }
-            if (program.backbone) {
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'backbone/backbone-min.js');
-                bower.dependencies.backbone = 'latest';
-            }
-            if (program.ember) {
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'ember/ember.min.js');
-                bower.dependencies.ember = 'latest';
-            }
-
-            // JS LIBRARIES
-            if (program.jquery) {
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'jquery/jquery.min/js');
-                bower.dependencies.jquery = 'latest';
-            }
-            if (program.mootools) {
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'mootools/Source/Core/Core.js');
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'mootools/Source/Browser/Browser.js');
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'mootools/Source/Class/Class.js');
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'mootools/Source/Element/Element.js');
-                bower.dependencies['mootools'] = 'latest';
-            }
-            if (program.zepto) {
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'zepto/zepto.min/js');
-                bower.dependencies.zepto = 'latest';
-            }
-
-
-            // CSS LIBRARIES
-            if (program.bootstrap) {
-                bowerScripts = 'bootstrap/bootstrap.min.js';
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', '');
-                bower.dependencies.bootstrap = 'latest';
-            }
-            if (program.foundation) {
-                bowerStyles = 'foundation/css/foundation.min.css';
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'foundation/js/foundation.min.js');
-                bower.dependencies.foundation = 'latest';
-            }
-            if (program.gumby) {
-                bowerStyles = 'gumby/css/gumby.css';
-                bowerStyles = 'gumby/css/style.css';
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'gumby/js/main.js');
-                bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'gumby/js/plugins.js');
-                bower.dependencies.gumby = 'latest';
-            }
-            if (program.skeleton) {
-                bowerStyles = 'skeleton/stylesheets/base.css';
-                bowerStyles = 'skeleton/stylesheets/skeleton.css';
-                bowerStyles = 'skeleton/stylesheets/layout.css';
-                bower.dependencies.skeleton = 'latest';
-            }
-
-            // console.log(scriptContent);
-            scriptContent = scriptContent.replace(new RegExp('{{bower}}', 'g'), bowerScripts);
-
-            fs.writeFileSync(bowerFile, JSON.stringify(bower, null, 4)); // WRITE PACKAGE FILE
-            fs.writeFileSync(scriptFile, scriptContent); // WRITE PACKAGE FILE
-
-        },
-
 
         // Check if the given directory `path` is empty.
         emptyDirectory : function (path, fn) {

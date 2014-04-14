@@ -29,8 +29,8 @@ program
   .option('--ember', 'add support for ember')
   // JS LIBRARIES
   .option('--jquery', 'add support for jquery')
-  .option('--mootools', 'add support for mootools')
-  .option('--zepto, --zeptojs', 'add support for zepto')
+  .option('--zepto', 'add support for zepto')
+  .option('--modernizr', 'add support for modernizr')
   // PREPROCESSOR LIBRARIES
   .option('--axis', 'add axis support to stylus')
   .option('--bourbon', 'add nib support to stylus')
@@ -88,7 +88,7 @@ if (program.generate) {
       } else {
           data = data.toString();
           data = data.replace(new RegExp('{model}', 'g'), name);
-          fs.writeFileSync(modelDir + name + '.js', data);
+          fs.writeFileSync(modelDir + name + 'Model.js', data);
       }
 
     });
