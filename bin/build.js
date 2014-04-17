@@ -96,7 +96,7 @@ module.exports = function ( program ) {
                             case 'sass':
 
                                 pkg.dependencies['node-sass'] = 'latest';
-                                data = data.replace(new RegExp('css: "stylus"', 'g'), 'css: "sass"');
+                                data = data.replace(new RegExp('css: false', 'g'), 'css: "sass"');
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.scss').pipe(fs.createWriteStream(path + '/public/css/styles.scss'));
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.css').pipe(fs.createWriteStream(path + '/public/css/styles.css'));
                                 console.log('   Setting CSS preprocessor to '.white + 'SASS'.blue);
@@ -105,7 +105,7 @@ module.exports = function ( program ) {
                             case 'less':
 
                                 pkg.dependencies['less-middleware'] = 'latest';
-                                data = data.replace(new RegExp('css: "stylus"', 'g'), 'css: "less"');
+                                data = data.replace(new RegExp('css: false', 'g'), 'css: "less"');
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.less').pipe(fs.createWriteStream(path + '/public/css/styles.less'));
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.css').pipe(fs.createWriteStream(path + '/public/css/styles.css'));
                                 console.log('   Setting CSS preprocessor to '.white + 'LESS'.blue);
@@ -114,6 +114,7 @@ module.exports = function ( program ) {
                             case 'stylus':
 
                                 pkg.dependencies.stylus = 'latest';
+                                data = data.replace(new RegExp('css: false', 'g'), 'css: "stylus"');
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.styl').pipe(fs.createWriteStream(path + '/public/css/styles.styl'));
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.css').pipe(fs.createWriteStream(path + '/public/css/styles.css'));
                                 console.log('   Setting CSS preprocessor to '.white + 'Stylus'.blue);
@@ -121,7 +122,6 @@ module.exports = function ( program ) {
 
                             default:
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.css').pipe(fs.createWriteStream(path + '/public/css/styles.css'));
-                                data = data.replace(new RegExp('css: "stylus"', 'g'), 'css: false');
                         }
 
 
