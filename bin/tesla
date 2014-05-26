@@ -14,6 +14,8 @@ var mkdirp = require('mkdirp'),
     version = pkg.version;
 
 
+
+
 // CLI
 program
   .version(version)
@@ -23,9 +25,11 @@ program
   .option('-F, --force', 'force on non-empty directory')
   .option('start', 'start the web server (still a bit buggy, best just just run "grunt" or "gulp" for now)')
   .option('generate', 'generate new model + controller with basic CRUD functionality')
+  .option('install', 'install site dependencies')
   // FE FRAMEWORKS
   .option('--angular', 'add support for angular')
   .option('--backbone', 'add support for backbone')
+  .option('--bower <items>', 'add bower package', (function (val) { return val.split(', ').join(',').split(','); }))
   .option('--ember', 'add support for ember')
   // JS LIBRARIES
   .option('--jquery', 'add support for jquery')
@@ -60,79 +64,271 @@ if ( program.html === 'handlebars' ) program.template = 'handlebars';  // HANDLE
 if ( program.html === 'mustache' ) program.template = 'mustache';  // MUSTACHE
 
 
-
 // SCAFFOLDING FOR MODELS/CONTROLLERS
 if (program.generate) {
 
-    var name = path,
-        pkgFile = './package.json';
-        fileContent = fs.readFileSync(pkgFile),
-        pkg = JSON.parse(fileContent),
-        appName = pkg.name,
-        templates = './lib/templates/';
-        modelDir = './app/models/',
-        modelFile = 'model.js',
-        controllerDir = './app/controllers/',
-        controllerFile = 'controller.js';
+  var name = path,
+      pkgFile = './package.json',
+      fileContent = fs.readFileSync(pkgFile),
+      pkg = JSON.parse(fileContent),
+      appName = pkg.name,
+      templates = './lib/templates/',
+      modelDir = './app/models/',
+      modelFile = 'model.js',
+      controllerDir = './app/controllers/',
+      controllerFile = 'controller.js';
 
-    // OVERRIDE FILE NAME IF WE'RE USING PARSE
-    if ( program.db === 'parse' ) {
-      modelFile = 'model.parse.js';
-      controllerFile = 'controller.parse.js';
+  // OVERRIDE FILE NAME IF WE'RE USING PARSE
+  if ( program.db === 'parse' ) {
+    modelFile = 'model.parse.js';
+    controllerFile = 'controller.parse.js';
+  }
+
+  // UPDATE MODEL
+  fs.readFile( templates + modelFile , function (err, data) {
+
+    if (err) {
+      console.log(err);
+    } else {
+      data = data.toString();
+      data = data.replace(new RegExp('{model}', 'g'), name);
+      fs.writeFileSync(modelDir + name + 'Model.js', data);
     }
 
-    // UPDATE MODEL
-    fs.readFile( templates + modelFile , function (err, data) {
-
-      if (err) {
-          console.log(err);
-      } else {
-          data = data.toString();
-          data = data.replace(new RegExp('{model}', 'g'), name);
-          fs.writeFileSync(modelDir + name + 'Model.js', data);
-      }
-
-    });
+  });
 
 
-    // UPDATE CONTROLLER
-    fs.readFile( templates + controllerFile , function (err, data) {
+  // UPDATE CONTROLLER
+  fs.readFile( templates + controllerFile , function (err, data) {
 
-        if (err) {
-            console.log(err);
-        } else {
+    if (err) {
+      console.log(err);
+    } else {
 
-            data = data.toString();
-            data = data.replace(new RegExp('{model}', 'g'), name + 'Model');
+      data = data.toString();
+      data = data.replace(new RegExp('{model}', 'g'), name + 'Model');
 
-            fs.writeFileSync(controllerDir + name + 'Controller.js', data);
-        }
+      fs.writeFileSync(controllerDir + name + 'Controller.js', data);
+    }
 
-    });
+  });
 
-    process.on('exit', function(){
-        console.log('');
-        console.log('Success!'.white + ' Tesla has generated 2 new files for you:'.white);
-        console.log('-> app/models/'.green + name.green + 'Model.js'.green);
-        console.log('-> app/controllers/'.green + name.green + 'Controller.js'.green);
-        console.log('');
-        console.log('The following URL\'s are now ready to use:'.white);
-        console.log('-> '.blue + name.blue + '/all'.blue + '  list all items in collection/table'.grey);
-        console.log('-> '.blue + name.blue + '/create'.blue + '  create new record'.grey);
-        console.log('-> '.blue + name.blue + '/delete/:id'.blue + '  delete record with id ":id"'.grey);
-        console.log('-> '.blue + name.blue + '/find'.blue + '  find items that match a query'.grey);
-        console.log('-> '.blue + name.blue + '/update/:id'.blue + '  update item with id ":id"'.grey);
-        console.log('');
-        console.log('Be sure you set the schema for your model in '.white + 'app/models/'.blue + name.blue + '.js'.blue);
-        console.log('');
-        console.log('Check out the docs for help or more info: '.white + 'https://github.com/teslajs/tesla.js#working-with-data'.blue);
-        console.log('');
-    });
+  process.on('exit', function(){
+    console.log('');
+    console.log('Success!'.white + ' Tesla has generated 2 new files for you:'.white);
+    console.log('-> app/models/'.green + name.green + 'Model.js'.green);
+    console.log('-> app/controllers/'.green + name.green + 'Controller.js'.green);
+    console.log('');
+    console.log('The following URL\'s are now ready to use:'.white);
+    console.log('-> '.blue + name.blue + '/all'.blue + '  list all items in collection/table'.grey);
+    console.log('-> '.blue + name.blue + '/create'.blue + '  create new record'.grey);
+    console.log('-> '.blue + name.blue + '/delete/:id'.blue + '  delete record with id ":id"'.grey);
+    console.log('-> '.blue + name.blue + '/find'.blue + '  find items that match a query'.grey);
+    console.log('-> '.blue + name.blue + '/update/:id'.blue + '  update item with id ":id"'.grey);
+    console.log('');
+    console.log('Be sure you set the schema for your model in '.white + 'app/models/'.blue + name.blue + '.js'.blue);
+    console.log('');
+    console.log('Check out the docs for help or more info: '.white + 'https://github.com/teslajs/tesla.js#working-with-data'.blue);
+    console.log('');
+  });
 
-    return false;
+  return false;
 
 } // END GENERATE
 
+
+
+// ISTALL BOWER FILES TO PAGE TEMPLATES
+if (program.install) {
+
+  // Modified from: https://www.npmjs.org/package/bower-path
+  function resolve(pkg) {
+
+    var path;
+
+    try {
+      var rc = fs.readFileSync('.bowerrc', 'utf8');
+      path = JSON.parse(rc).directory || 'bower_components';
+    } catch (err) {
+      path = 'bower_components';
+    }
+
+    path += '/' + pkg + '/';
+    var config = fs.readFileSync(path + '.bower.json', 'utf8');
+    var main = JSON.parse(config).main;
+
+    if ( typeof main !== 'undefined' ) {
+      return path + main;
+    } else {
+      return false;
+    }
+  }
+
+  bower = JSON.parse(fs.readFileSync(path + '/bower.json'));
+
+  var bowerScripts = '',
+      bowerStyles = '',
+      css = [],
+      js = [],
+      notInstalled = [],
+      viewType,
+      dependencies = bower.dependencies;
+
+
+  for (var key in bower.dependencies) {
+
+    files = resolve(key);
+
+    if ( files !== false ) {
+
+      if ( Array.isArray( files.split(',') ) ) {
+
+        files = files.split(',');
+
+        files.forEach( function(item) {
+
+          if ( item.indexOf('.js') >= 0 ) {
+            js.push(item);
+          } else if( item.indexOf('.css') >= 0 ) {
+            css.push(item);
+          } else {
+            if ( item !== false) notInstalled.push(item);
+          }
+
+        });
+
+
+      } else {
+
+        if ( files.indexOf('.js') >= 0 ) {
+          js.push(files);
+        } else if( files.indexOf('.css') >= 0 ) {
+          css.push(files);
+        } else {
+          if ( files !== false) notInstalled.push(files);
+        }
+
+      }
+
+
+    }
+
+
+  }
+
+  if ( fs.existsSync(path + '/app/views/index.jade') ) {
+
+    viewType = 'jade';
+    scriptTemplate = "script(src='#{site.dir.lib}{{src}}')\n";
+    styleTemplate = '    link(rel="stylesheet", href="#{site.dir.lib}{{src}}")' + "\n";
+
+    // UPDATE SCRIPT FILE
+    var scriptFile = path + '/app/views/_inc/footer.jade',
+        scriptContent = fs.readFileSync(scriptFile);
+
+    // UPDATE STYLE FILE
+    var styleFile = path + '/app/views/_inc/header.jade',
+        styleContent = fs.readFileSync(styleFile);
+
+  } else if ( fs.existsSync(path + '/app/views/index.hbs') ) {
+
+    viewType = 'hbs';
+    scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
+    styleTemplate = '        <link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
+
+    // UPDATE SCRIPT FILE
+    var scriptFile = path + '/app/views/partials/footer.hbs',
+        scriptContent = fs.readFileSync(scriptFile);
+
+    // UPDATE STYLE FILE
+    var styleFile = path + '/app/views/partials/header.hbs',
+        styleContent = fs.readFileSync(styleFile);
+
+  } else if ( fs.existsSync(path + '/app/views/index.ejs') ) {
+
+    viewType = 'ejs';
+    scriptTemplate = '<script src="<%= site.dir.lib %>{{src}}" ></script>' + "\n";
+    styleTemplate = '        <link rel="stylesheet" href="<%= site.dir.lib %>{{src}}">' + "\n";
+
+    // UPDATE SCRIPT FILE
+    var scriptFile = path + '/app/views/_inc/footer.ejs',
+        scriptContent = fs.readFileSync(scriptFile);
+
+    // UPDATE STYLE FILE
+    var styleFile = path + '/app/views/_inc/header.ejs',
+        styleContent = fs.readFileSync(styleFile);
+
+  } else if ( fs.existsSync(path + '/app/views/index.mustache') ) {
+
+    viewType = 'mustache';
+    scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
+    styleTemplate = '        <link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
+
+    // UPDATE SCRIPT FILE
+    var scriptFile = path + '/app/views/_inc/footer.mustache',
+        scriptContent = fs.readFileSync(scriptFile);
+
+    // UPDATE STYLE FILE
+    var styleFile = path + '/app/views/_inc/header.mustache',
+        styleContent = fs.readFileSync(styleFile);
+  }
+
+
+  js.forEach( function(item) {
+    bowerScripts += scriptTemplate.replace('{{src}}', item.split('public/lib/').join('') );
+  });
+
+  css.forEach( function(item) {
+    bowerStyles += styleTemplate.replace('{{src}}', item.split('public/lib/').join('') );
+  });
+
+
+  fs.appendFileSync(scriptFile, '\n\n' + bowerScripts); // WRITE STYLES
+  fs.appendFileSync(styleFile, '\n\n' + bowerStyles); // WRITE SCRIPTS
+
+  console.log(' ');
+
+  console.log('- - - - - - - - - - - - - - - - - - - - - -'.blue);
+  console.log('INFO: '.blue + 'ADDING BOWER FILES TO PAGE TEMPLATES'.white);
+  console.log('- - - - - - - - - - - - - - - - - - - - - -'.blue);
+
+  console.log(' ');
+
+  console.log('INFO: '.blue + 'The following JavaScript files have been appended to '.white + scriptFile);
+
+  js.forEach( function(item) {
+    item = item.split('public/lib/').join('');
+    console.log( '      > '.grey + 'public/lib/'.grey + item.grey );
+  });
+
+  console.log(' ');
+
+  console.log('INFO: '.blue + 'The following CSS files have been appended to ' + styleFile);
+
+  css.forEach( function(item) {
+    item = item.split('public/lib/').join('');
+    console.log( '      > '.grey + 'public/lib/'.grey + item.grey );
+  });
+
+  console.log(' ');
+
+  console.info('INFO: '.blue + 'The following files were installed, but not autmatically added to your templates:');
+
+  notInstalled.forEach( function(item) {
+    item = item.split('public/lib/').join('');
+    console.log( '      > '.grey + 'public/lib/'.grey + item.grey );
+  });
+
+  console.log(' ');
+  console.log('- - - - - - - - - - - - - - - - - - - - - -'.green);
+  console.log('DONE: '.green + 'Bower files have been installed'.white);
+  console.log('- - - - - - - - - - - - - - - - - - - - - -'.green);
+  console.log(' ');
+
+
+  return false;
+
+} // END INSTALL
 
 // START THE SERVER
 if (program.start) {

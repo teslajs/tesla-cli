@@ -365,6 +365,20 @@ module.exports = function ( program ) {
                         }
 
 
+
+                        if ( program.bower ) {
+
+                          program.bower.forEach( function(element) {
+                            // bowerScripts = bowerScripts + scriptTemplate.replace('{{src}}', 'jquery/dist/jquery.min.js');
+                            bower.dependencies[element] = 'latest';
+                            // console.log( element.white + ' will be installed to '.white + resolve(element) );
+                            console.log('   Adding support for '.white + element.blue);
+                          });
+
+                        }
+
+
+
                         styleContent = styleContent.replace(new RegExp('{{bowerHead}}', 'g'), '{{bowerHead}}' + "\n" + bowerHeadScripts);
                         styleContent = styleContent.replace(new RegExp('{{bowerHead}}', 'g'), bowerStyles);
                         scriptContent = scriptContent.replace(new RegExp('{{bowerFoot}}', 'g'), bowerScripts);
@@ -401,7 +415,7 @@ module.exports = function ( program ) {
                 console.log('   To get up & running, you just need to run these 2 commands:'.white);
                 console.log();
                 console.log('   1. install dependencies:'.blue + '      you only need to do this once'.grey);
-                console.log('      $'.grey + ' cd %s && npm install'.white, path);
+                console.log('      $'.grey + ' cd %s && npm install && tesla install'.white, path);
                 console.log();
                 console.log('   2. launch the app with grunt:'.blue);
                 console.log('      $'.grey + ' tesla start'.white);
