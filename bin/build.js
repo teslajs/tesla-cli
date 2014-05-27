@@ -96,7 +96,7 @@ module.exports = function ( program ) {
                             case 'sass':
 
                                 pkg.dependencies['node-sass'] = 'latest';
-                                data = data.replace(new RegExp('css : false', 'g'), 'css: "sass"');
+                                data = data.replace(new RegExp('css : false', 'g'), 'css: \'sass\'');
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.scss').pipe(fs.createWriteStream(path + '/public/css/styles.scss'));
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.css').pipe(fs.createWriteStream(path + '/public/css/styles.css'));
                                 console.log('   Setting CSS preprocessor to '.white + 'SASS'.blue);
@@ -105,7 +105,7 @@ module.exports = function ( program ) {
                             case 'less':
 
                                 pkg.dependencies['less-middleware'] = 'latest';
-                                data = data.replace(new RegExp('css : false', 'g'), 'css: "less"');
+                                data = data.replace(new RegExp('css : false', 'g'), 'css: \'less\'');
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.less').pipe(fs.createWriteStream(path + '/public/css/styles.less'));
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.css').pipe(fs.createWriteStream(path + '/public/css/styles.css'));
                                 console.log('   Setting CSS preprocessor to '.white + 'LESS'.blue);
@@ -114,7 +114,7 @@ module.exports = function ( program ) {
                             case 'stylus':
 
                                 pkg.dependencies.stylus = 'latest';
-                                data = data.replace(new RegExp('css : false', 'g'), 'css: "stylus"');
+                                data = data.replace(new RegExp('css : false', 'g'), 'css: \'stylus\'');
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.styl').pipe(fs.createWriteStream(path + '/public/css/styles.styl'));
                                 fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.css').pipe(fs.createWriteStream(path + '/public/css/styles.css'));
                                 console.log('   Setting CSS preprocessor to '.white + 'Stylus'.blue);
@@ -135,7 +135,7 @@ module.exports = function ( program ) {
                                 pkg.dependencies.ejs = 'latest';
                                 scriptTemplate = '<script src="<%= site.dir.lib %>{{src}}" ></script>' + "\n";
                                 styleTemplate = '        <link rel="stylesheet" href="<%= site.dir.lib %>{{src}}">' + "\n";
-                                data = data.replace(new RegExp('html : "jade"', 'g'), 'html: "ejs"');
+                                data = data.replace(new RegExp('html : \'jade\'', 'g'), 'html: \'ejs\'');
                                 wrench.rmdirSyncRecursive(path + '/app/views');
                                 wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/views/ejs', path + '/app/views/');
 
@@ -156,7 +156,7 @@ module.exports = function ( program ) {
                                 pkg.dependencies['hbs'] = 'latest';
                                 scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
                                 styleTemplate = '        <link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
-                                data = data.replace(new RegExp('html : "jade"', 'g'), 'html: "hbs"');
+                                data = data.replace(new RegExp('html : \'jade\'', 'g'), 'html: \'hbs\'');
                                 wrench.rmdirSyncRecursive(path + '/app/views');
                                 wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/views/handlebars', path + '/app/views/');
 
@@ -180,7 +180,7 @@ module.exports = function ( program ) {
                                 pkg.dependencies['hogan-middleware'] = 'latest';
                                 scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
                                 styleTemplate = '        <link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
-                                data = data.replace(new RegExp('html : "jade"', 'g'), 'html: "hogan"');
+                                data = data.replace(new RegExp('html : \'jade\'', 'g'), 'html: \'hogan\'');
                                 wrench.rmdirSyncRecursive(path + '/app/views');
                                 wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/views/hogan', path + '/app/views/');
 
@@ -202,7 +202,7 @@ module.exports = function ( program ) {
                                 scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
                                 styleTemplate = '        <link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
 
-                                data = data.replace(new RegExp('html : "jade"', 'g'), 'html: "mustache"');
+                                data = data.replace(new RegExp('html : \'jade\'', 'g'), 'html: \'mustache\'');
                                 wrench.rmdirSyncRecursive(path + '/app/views');
                                 wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/views/mustache', path + '/app/views/');
 
@@ -243,17 +243,17 @@ module.exports = function ( program ) {
                         // PREPROCESSOR LIBRARIES
                         if (program.axis) {
                             pkg.dependencies['axis-css'] = "latest";
-                            data = data.replace(new RegExp('cssLibrary : false', 'g'), 'cssLibrary: "axis"');
+                            data = data.replace(new RegExp('cssLibrary : false', 'g'), 'cssLibrary: \'axis\'');
                             console.log('   Adding support for '.white + 'Axis'.blue);
                         }
                         if (program.bourbon) {
                             pkg.dependencies['node-bourbon'] = 'latest';
-                            data = data.replace(new RegExp('cssLibrary : false', 'g'), 'cssLibrary: "bourbon"');
+                            data = data.replace(new RegExp('cssLibrary : false', 'g'), 'cssLibrary: \'bourbon\'');
                             console.log('   Adding support for '.white + 'Bourbon'.blue);
                         }
                         if (program.nib) {
-                            pkg.dependencies.nib = "latest";
-                            data = data.replace(new RegExp('cssLibrary : false', 'g'), 'cssLibrary: "nib"');
+                            pkg.dependencies.nib = 'latest';
+                            data = data.replace(new RegExp('cssLibrary : false', 'g'), 'cssLibrary: \'nib\'');
                             console.log('   Adding support for '.white + 'Nib'.blue);
                         }
 
