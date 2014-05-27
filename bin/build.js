@@ -96,32 +96,31 @@ module.exports = function ( program ) {
                             case 'sass':
 
                                 pkg.dependencies['node-sass'] = 'latest';
-                                data = data.replace(new RegExp('css : false', 'g'), 'css: \'sass\'');
-                                fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.scss').pipe(fs.createWriteStream(path + '/public/css/styles.scss'));
-                                fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.css').pipe(fs.createWriteStream(path + '/public/css/styles.css'));
+                                data = data.replace(new RegExp('css : \'stylus\'', 'g'), 'css: \'sass\'');
                                 console.log('   Setting CSS preprocessor to '.white + 'SASS'.blue);
+                                cssProcessor = 'sass';
                                 break;
 
                             case 'less':
 
                                 pkg.dependencies['less-middleware'] = 'latest';
-                                data = data.replace(new RegExp('css : false', 'g'), 'css: \'less\'');
-                                fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.less').pipe(fs.createWriteStream(path + '/public/css/styles.less'));
-                                fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.css').pipe(fs.createWriteStream(path + '/public/css/styles.css'));
+                                data = data.replace(new RegExp('css : \'stylus\'', 'g'), 'css: \'less\'');
                                 console.log('   Setting CSS preprocessor to '.white + 'LESS'.blue);
+                                cssProcessor = 'less';
                                 break;
 
                             case 'stylus':
 
                                 pkg.dependencies.stylus = 'latest';
-                                data = data.replace(new RegExp('css : false', 'g'), 'css: \'stylus\'');
-                                fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.styl').pipe(fs.createWriteStream(path + '/public/css/styles.styl'));
-                                fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.css').pipe(fs.createWriteStream(path + '/public/css/styles.css'));
+                                data = data.replace(new RegExp('css : \'stylus\'', 'g'), 'css: \'stylus\'');
                                 console.log('   Setting CSS preprocessor to '.white + 'Stylus'.blue);
+                                cssProcessor = 'stylus';
                                 break;
 
                             default:
-                                fs.createReadStream(__dirname + '/_src/lib/templates/css/styles.css').pipe(fs.createWriteStream(path + '/public/css/styles.css'));
+
+                              cssProcessor = 'stylus';
+
                         }
 
 
@@ -383,6 +382,10 @@ module.exports = function ( program ) {
                         styleContent = styleContent.replace(new RegExp('{{bowerHead}}', 'g'), bowerStyles);
                         scriptContent = scriptContent.replace(new RegExp('{{bowerFoot}}', 'g'), bowerScripts);
 
+
+                        wrench.rmdirSyncRecursive(path + '/public/css');
+                        console.log('SRC '.blue + __dirname + '/_src/lib/templates/css/' + cssProcessor + ' TO '.blue + path + '/public/css/');
+                        wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/css/' + cssProcessor, path + '/public/css/');
 
                         fs.writeFileSync(styleFile, styleContent); // WRITE STYLES TO HEAD
                         fs.writeFileSync(scriptFile, scriptContent); // WRITE SCRIPTS TO FOOT
