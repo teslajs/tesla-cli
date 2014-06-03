@@ -383,10 +383,15 @@ module.exports = function ( program ) {
                         styleContent = styleContent.replace(new RegExp('{{bowerHead}}', 'g'), bowerStyles);
                         scriptContent = scriptContent.replace(new RegExp('{{bowerFoot}}', 'g'), bowerScripts);
 
-
+                        // ADD CSS FILES
                         wrench.rmdirSyncRecursive(path + '/public/css');
                         wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/css/' + cssProcessor, path + '/public/css/');
+
+                        // ADD .CACHE DIR
                         wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/.cache/' + cssProcessor, path + '/public/.cache/');
+
+                        // RENAME LICENSE TO TESLA-LICENSE
+                        fs.renameSync(path + '/LICENSE', path + '/TESLA-LICENSE')
 
                         // POPULATE README FILE
                         var readmeContents = '# ' + path + '\n' + 'Information about your app should go here.';
