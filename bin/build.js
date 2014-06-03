@@ -119,6 +119,7 @@ module.exports = function ( program ) {
 
                             default:
 
+                              data = data.replace(new RegExp('css : \'stylus\'', 'g'), 'css: false');
                               cssProcessor = 'stylus';
 
                         }
@@ -384,7 +385,6 @@ module.exports = function ( program ) {
 
 
                         wrench.rmdirSyncRecursive(path + '/public/css');
-                        console.log('SRC '.blue + __dirname + '/_src/lib/templates/css/' + cssProcessor + ' TO '.blue + path + '/public/css/');
                         wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/css/' + cssProcessor, path + '/public/css/');
 
                         fs.writeFileSync(styleFile, styleContent); // WRITE STYLES TO HEAD
