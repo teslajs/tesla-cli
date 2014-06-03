@@ -283,8 +283,37 @@ if (program.install) {
   });
 
 
-  fs.appendFileSync(scriptFile, '\n\n' + bowerScripts); // WRITE STYLES
-  fs.appendFileSync(styleFile, '\n\n' + bowerStyles); // WRITE SCRIPTS
+
+
+  // fs.appendFileSync(scriptFile, '\n\n' + bowerScripts); // WRITE STYLES
+  // fs.appendFileSync(styleFile, '\n\n' + bowerStyles); // WRITE SCRIPTS
+
+
+
+
+    if ( viewType === 'jade' ) {
+
+      fs.appendFileSync(scriptFile, '\n\n' + bowerScripts); // WRITE STYLES
+      fs.appendFileSync(styleFile, '\n\n' + bowerStyles); // WRITE SCRIPTS
+
+    } else {
+
+      fs.readFile( scriptFile, function (err, data) {
+        data = data.toString();
+        data = data.replace(new RegExp('</body>', 'g'), '\n' + bowerScripts + '\n\n</body>');
+        fs.writeFileSync(scriptFile, data); // WRITE CONFIG FILE
+      });
+
+      fs.readFile( styleFile, function (err, data) {
+        data = data.toString();
+        data = data.replace(new RegExp('</head>', 'g'), '\n' + bowerStyles + '\n\n</head>');
+        fs.writeFileSync(styleFile, data); // WRITE CONFIG FILE
+      });
+
+    }
+
+
+
 
   console.log(' ');
 
