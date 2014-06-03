@@ -386,6 +386,11 @@ module.exports = function ( program ) {
 
                         wrench.rmdirSyncRecursive(path + '/public/css');
                         wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/css/' + cssProcessor, path + '/public/css/');
+                        wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/.cache/' + cssProcessor, path + '/public/.cache/');
+
+                        // POPULATE README FILE
+                        var readmeContents = '# ' + path + '\n' + 'Information about your app should go here.';
+                        fs.writeFileSync(path + '/README.md', readmeContents); // WRITE STYLES TO HEAD
 
                         fs.writeFileSync(styleFile, styleContent); // WRITE STYLES TO HEAD
                         fs.writeFileSync(scriptFile, scriptContent); // WRITE SCRIPTS TO FOOT
