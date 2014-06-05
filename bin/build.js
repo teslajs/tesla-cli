@@ -388,7 +388,7 @@ module.exports = function ( program ) {
                         wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/css/' + cssProcessor, path + '/public/css/');
 
                         // ADD .CACHE DIR
-                        wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/_cache/', path + '/public/_cache/');
+                        wrench.mkdirSyncRecursive(path + '/public/_cache/', 0777);
 
                         // RENAME LICENSE TO TESLA-LICENSE
                         fs.renameSync(path + '/LICENSE', path + '/TESLA-LICENSE')
