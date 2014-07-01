@@ -3,11 +3,11 @@
 [![NPM version](https://badge.fury.io/js/tesla-cli.png)](http://badge.fury.io/js/tesla-cli)
 [![Dependency Status](https://gemnasium.com/teslajs/tesla-cli.png)](https://gemnasium.com/teslajs/tesla-cli)
 
-###### Documentation: [teslajs.com](http://teslajs.com/)
+###### Full Documentation: [teslajs.com](http://teslajs.com/)
 ###### Updates: [twitter.com/teslajs](http://twitter.com/teslajs/)
 
 ## About 
-Tesla is a modern MVC style framework built on to of [Node.js](http://nodejs.org/) and [Express](http://expressjs.com/). It's designed to be as flexible as possible, and includes sane default and easily configurable boilerplates to get you up an running as quickly as possible.
+Tesla is a modern MVC style framework built on top of [Node.js](http://nodejs.org/) and [Express](http://expressjs.com/). It's built to be fast, simple and easy to configure, with sane defaults and flexible boilerplates to get you up and running as quickly as possible.
 
 It's still a work in progress, with more features being added, and while the current build seems stable, bug reports are always apreciated!
 
