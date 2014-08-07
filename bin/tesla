@@ -62,7 +62,7 @@ if ( program.html === 'ejs' ) program.template = 'ejs'; // EJS
 if ( program.html === 'hogan' ) program.template = 'hogan'; // HOGAN
 if ( program.html === 'handlebars' ) program.template = 'handlebars';  // HANDLEBARS
 if ( program.html === 'mustache' ) program.template = 'mustache';  // MUSTACHE
-if ( program.html === 'swig' ) program.template = 'swig';  // MUSTACHE
+if ( program.html === 'swig' ) program.template = 'swig';  // swig
 
 
 // SCAFFOLDING FOR MODELS/CONTROLLERS
@@ -271,6 +271,19 @@ if (program.install) {
 
     // UPDATE STYLE FILE
     var styleFile = path + '/app/views/_inc/header.mustache',
+        styleContent = fs.readFileSync(styleFile);
+  } else if ( fs.existsSync(path + '/app/views/index.html') ) {
+
+    viewType = 'swig';
+    scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
+    styleTemplate = '        <link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
+
+    // UPDATE SCRIPT FILE
+    var scriptFile = path + '/app/views/_inc/footer.html',
+        scriptContent = fs.readFileSync(scriptFile);
+
+    // UPDATE STYLE FILE
+    var styleFile = path + '/app/views/_inc/header.html',
         styleContent = fs.readFileSync(styleFile);
   }
 

@@ -215,6 +215,27 @@ module.exports = function ( program ) {
                                     styleContent = fs.readFileSync(styleFile);
 
                                 break;
+                            case 'swig':
+
+                                console.log('   Setting view template to '.white + 'Swig'.blue);
+
+                                pkg.dependencies['swig'] = 'latest';
+                                scriptTemplate = '<script src="{{site.dir.lib}}{{src}}" ></script>' + "\n";
+                                styleTemplate = '        <link rel="stylesheet" href="{{site.dir.lib}}{{src}}">' + "\n";
+
+                                data = data.replace(new RegExp('html : \'jade\'', 'g'), 'html: \'swig\'');
+                                wrench.rmdirSyncRecursive(path + '/app/views');
+                                wrench.copyDirSyncRecursive(__dirname + '/_src/lib/templates/views/swig', path + '/app/views/');
+
+                                // UPDATE SCRIPT FILE
+                                var scriptFile = path + '/app/views/_inc/footer.html',
+                                    scriptContent = fs.readFileSync(scriptFile);
+
+                                // UPDATE STYLE FILE
+                                var styleFile = path + '/app/views/_inc/header.html',
+                                    styleContent = fs.readFileSync(styleFile);
+
+                                break;    
 
                             default:
 
