@@ -20,7 +20,7 @@ var mkdirp = require('mkdirp'),
 program
   .version(version)
   .usage('[options] [dir]')
-  .option('-H, --html <template>', 'set html teplating engine: ejs|hjs|jshtml}hogan|jade (default)')
+  .option('-H, --html <template>', 'set html teplating engine: ejs|hjs|jshtml}hogan|swig|jade (default)')
   .option('-C, --css <engine>', 'add stylesheet <engine> support (less|stylus) (defaults to plain css)')
   .option('-F, --force', 'force on non-empty directory')
   .option('start', 'start the web server (still a bit buggy, best just just run "grunt" or "gulp" for now)')
@@ -62,6 +62,7 @@ if ( program.html === 'ejs' ) program.template = 'ejs'; // EJS
 if ( program.html === 'hogan' ) program.template = 'hogan'; // HOGAN
 if ( program.html === 'handlebars' ) program.template = 'handlebars';  // HANDLEBARS
 if ( program.html === 'mustache' ) program.template = 'mustache';  // MUSTACHE
+if ( program.html === 'swig' ) program.template = 'swig';  // MUSTACHE
 
 
 // SCAFFOLDING FOR MODELS/CONTROLLERS
