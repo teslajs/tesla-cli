@@ -10,7 +10,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/teslajs/tesla-cli"
+    "url": "https://github.com/captainhurst/tesla-cli"
   },
   "bugs": {
     "url": "https://github.com/teslajs/tesla-cli/issues"
